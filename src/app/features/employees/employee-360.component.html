@@ -1,0 +1,304 @@
+@if (loading() && !profile()) {
+  <div class="space-y-5">
+    <div class="skeleton h-48 rounded-3xl"></div>
+    <div class="skeleton h-12 w-2/3"></div>
+    <div class="grid gap-5 lg:grid-cols-2">
+      <div class="skeleton h-64"></div>
+      <div class="skeleton h-64"></div>
+    </div>
+  </div>
+} @else if (notFound()) {
+  <app-empty-state art="search" tone="slate" title="Employee not found" description="This profile does not exist or was removed.">
+    <a routerLink="/employees" class="btn btn-secondary"><lucide-icon [img]="icons.ArrowLeft" [size]="16" /> Back to directory</a>
+  </app-empty-state>
+} @else if (profile()) {
+  @let p = profile()!;
+  @let e = p.employee;
+
+  <!-- Header -->
+  <section @fadeInUp class="card relative mb-6 overflow-hidden">
+    <div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-r from-emerald-500 via-teal-500 to-teal-700 dark:from-emerald-600 dark:via-teal-700 dark:to-slate-900">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.18)_1px,transparent_0)] [background-size:22px_22px]"></div>
+    </div>
+    <div class="relative px-5 pb-5 pt-14 sm:px-7">
+      @if (id()) {
+        <button type="button" class="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-xl bg-white/20 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur transition hover:bg-white/30" (click)="back()">
+          <lucide-icon [img]="icons.ArrowLeft" [size]="14" /> Directory
+        </button>
+      }
+      <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <div class="rounded-[1.6rem] bg-white p-1.5 shadow-lg dark:bg-slate-900">
+            <app-avatar [name]="e.fullName" size="xl" />
+          </div>
+          <div class="min-w-0 pb-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">{{ e.fullName }}</h1>
+              <app-status-badge [status]="e.status" size="md" />
+              @if (anomaly(); as a) {
+                <span class="badge bg-rose-500 py-1 text-white ring-rose-500 shadow-sm shadow-rose-500/30" [title]="flagsText(a)">
+                  <lucide-icon [img]="icons.TriangleAlert" [size]="12" /> Absence anomaly
+                </span>
+              }
+            </div>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ e.designation.name || '—' }} · {{ e.department.name || '—' }}</p>
+            <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+              <span class="inline-flex items-center gap-1.5 font-mono"><lucide-icon [img]="icons.Hash" [size]="13" />{{ e.code }}</span>
+              <span class="inline-flex items-center gap-1.5"><lucide-icon [img]="icons.CalendarDays" [size]="13" />Joined {{ e.joinDate | day }} · {{ tenure() }}</span>
+              <span class="inline-flex items-center gap-1.5"><lucide-icon [img]="icons.Mail" [size]="13" />{{ e.email }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-end gap-4">
+          @if (isManagerView()) {
+            <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/80 px-4 py-2 dark:border-slate-800 dark:bg-slate-900/70">
+              <app-gauge [score]="risk()?.score ?? 0" [size]="120">
+                <p class="text-lg font-extrabold leading-none text-slate-900 dark:text-white">{{ riskLoaded() ? (risk()?.score ?? 0) : '…' }}</p>
+              </app-gauge>
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Attrition risk</p>
+                @if (risk(); as r) {
+                  <div class="mt-1"><app-status-badge [status]="r.level" /></div>
+                  <p class="mt-1 max-w-[12rem] text-[11px] leading-snug text-slate-500 dark:text-slate-400">{{ r.reasons[0] || 'No risk factors detected' }}</p>
+                } @else if (riskLoaded()) {
+                  <p class="mt-1 text-xs text-slate-500">Not enough data yet</p>
+                }
+              </div>
+            </div>
+          }
+          @if (canEditJob()) {
+            <button type="button" class="btn btn-primary" (click)="openEdit()"><lucide-icon [img]="icons.Pencil" [size]="16" /> Edit details</button>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="mb-6">
+    <app-segmented-tabs [tabs]="tabs" [active]="tab()" (activeChange)="setTab($event)" />
+  </div>
+
+  @switch (tab()) {
+    <!-- Job & personal info -->
+    @case ('info') {
+      <div @fadeInUp class="grid gap-6 lg:grid-cols-2">
+        <section class="card card-pad">
+          <h2 class="section-title mb-4 flex items-center gap-2"><lucide-icon [img]="icons.Briefcase" [size]="17" class="text-teal-500" /> Job</h2>
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
+            <div><dt class="text-xs text-slate-500 dark:text-slate-400">Employee code</dt><dd class="mt-0.5 font-mono font-semibold">{{ e.code }}</dd></div>
+            <div><dt class="text-xs text-slate-500 dark:text-slate-400">Status</dt><dd class="mt-1"><app-status-badge [status]="e.status" /></dd></div>
+            <div><dt class="text-xs text-slate-500 dark:text-slate-400">Department</dt><dd class="mt-0.5 font-semibold">{{ e.department.name || '—' }}</dd></div>
+            <div><dt class="text-xs text-slate-500 dark:text-slate-400">Designation</dt><dd class="mt-0.5 font-semibold">{{ e.designation.name || '—' }}</dd></div>
+            <div><dt class="text-xs text-slate-500 dark:text-slate-400">Join date</dt><dd class="mt-0.5 font-semibold">{{ e.joinDate | day }}</dd></div>
+            <div><dt class="text-xs text-slate-500 dark:text-slate-400">Exit date</dt><dd class="mt-0.5 font-semibold">{{ e.exitDate ? (e.exitDate | day) : '—' }}</dd></div>
+          </dl>
+          @if (p.account; as acc) {
+            <div class="mt-5 rounded-2xl border border-slate-100 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-900/50">
+              <p class="eyebrow mb-2">Login</p>
+              <div class="flex flex-wrap items-center gap-2 text-sm">
+                <app-role-badge [role]="acc.role" />
+                <app-status-badge [status]="acc.isActive ? 'active' : 'inactive'" />
+                @if (acc.mustChangePassword) {
+                  <span class="badge bg-amber-50 text-amber-800 ring-amber-600/25 dark:bg-amber-500/10 dark:text-amber-300">Temporary password</span>
+                }
+                <span class="text-xs text-slate-500 dark:text-slate-400">Last sign-in {{ acc.lastLoginAt ? (acc.lastLoginAt | ago) : 'never' }}</span>
+              </div>
+            </div>
+          }
+        </section>
+
+        <section class="card card-pad">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="section-title flex items-center gap-2"><lucide-icon [img]="icons.UserRound" [size]="17" class="text-amber-500" /> Personal & contact</h2>
+            @if (isOwn() && !editingContact()) {
+              <button type="button" class="btn btn-ghost btn-sm" (click)="startContactEdit()"><lucide-icon [img]="icons.Pencil" [size]="13" /> Edit phone & address</button>
+            }
+          </div>
+          @if (editingContact()) {
+            <form @fadeInUp [formGroup]="contactForm" (ngSubmit)="saveContact()" class="space-y-4">
+              <div>
+                <label class="label" for="cp">Phone</label>
+                <input id="cp" class="input" formControlName="phone" placeholder="+92 300 1234567" />
+                <app-field-error [control]="contactForm.controls.phone" label="Phone" />
+              </div>
+              <div>
+                <label class="label" for="ca">Address</label>
+                <textarea id="ca" rows="2" class="input resize-none" formControlName="address"></textarea>
+              </div>
+              <p class="text-xs text-slate-500 dark:text-slate-400">You can update only your phone and address. Ask HR to change anything else.</p>
+              <div class="flex justify-end gap-2">
+                <button type="button" class="btn btn-secondary btn-sm" (click)="editingContact.set(false)">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm" [disabled]="savingContact()">
+                  <lucide-icon [img]="savingContact() ? icons.LoaderCircle : icons.Check" [size]="14" [class.animate-spin]="savingContact()" /> Save
+                </button>
+              </div>
+            </form>
+          } @else {
+            <dl class="space-y-3.5 text-sm">
+              <div class="flex items-start gap-3"><lucide-icon [img]="icons.Mail" [size]="16" class="mt-0.5 text-slate-400" /><div><dt class="text-xs text-slate-500 dark:text-slate-400">Email</dt><dd class="font-medium">{{ e.email }}</dd></div></div>
+              <div class="flex items-start gap-3"><lucide-icon [img]="icons.Phone" [size]="16" class="mt-0.5 text-slate-400" /><div><dt class="text-xs text-slate-500 dark:text-slate-400">Phone</dt><dd class="font-medium">{{ e.phone || '—' }}</dd></div></div>
+              <div class="flex items-start gap-3"><lucide-icon [img]="icons.House" [size]="16" class="mt-0.5 text-slate-400" /><div><dt class="text-xs text-slate-500 dark:text-slate-400">Address</dt><dd class="font-medium">{{ e.address || '—' }}</dd></div></div>
+              <div class="flex items-start gap-3"><lucide-icon [img]="icons.UserRound" [size]="16" class="mt-0.5 text-slate-400" /><div><dt class="text-xs text-slate-500 dark:text-slate-400">Gender</dt><dd class="font-medium capitalize">{{ e.gender || 'Not specified' }}</dd></div></div>
+            </dl>
+          }
+        </section>
+
+        <section class="card card-pad lg:col-span-2">
+          <h2 class="section-title mb-4 flex items-center gap-2"><lucide-icon [img]="icons.Activity" [size]="17" class="text-emerald-500" /> This month so far</h2>
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-5" [@listStagger]="monthStats().length">
+            @for (s of monthStats(); track s.label) {
+              <div class="rounded-2xl bg-slate-50 p-4 text-center dark:bg-slate-800/50">
+                <p class="text-2xl font-extrabold" [class]="s.tone">{{ s.value }}</p>
+                <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ s.label }}</p>
+              </div>
+            }
+          </div>
+          @if (risk(); as r) {
+            <div class="mt-5 rounded-2xl border border-slate-100 p-4 dark:border-slate-800">
+              <p class="eyebrow mb-3">Attrition risk factors · last 90 days</p>
+              <div class="grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
+                @for (f of r.factors; track f.factor) {
+                  <div>
+                    <div class="flex justify-between text-xs"><span class="font-medium capitalize text-slate-700 dark:text-slate-200">{{ f.factor.replace('unplannedLeave', 'sick / unpaid leave').replace('missingCheckouts', 'missing check-outs').replace('payGap', 'pay gap') }}</span><span class="text-slate-400">{{ f.contribution }}/{{ f.weight }}</span></div>
+                    <div class="mt-1 h-1.5 overflow-hidden rounded-full bg-rose-100 dark:bg-rose-500/15"><div class="h-full rounded-full bg-rose-500 transition-all duration-700" [style.width.%]="riskFactorWidth(f.contribution, f.weight)"></div></div>
+                    <p class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">{{ f.detail }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          @if (anomaly(); as a) {
+            <ul class="mt-4 space-y-1.5">
+              @for (f of a.flags; track f.code) {
+                <li class="flex items-center gap-2 rounded-xl bg-rose-50 px-3 py-2 text-xs font-medium text-rose-800 dark:bg-rose-500/10 dark:text-rose-200"><lucide-icon [img]="icons.TriangleAlert" [size]="13" /> {{ f.message }}</li>
+              }
+            </ul>
+          }
+        </section>
+      </div>
+    }
+
+    <!-- Attendance calendar -->
+    @case ('attendance') {
+      <section @fadeInUp class="card card-pad">
+        <app-attendance-calendar
+          [month]="month()"
+          [records]="records()"
+          [loading]="recordsLoading()"
+          [joinDate]="e.joinDate"
+          [allowCorrection]="isOwn()"
+          (monthChange)="month.set($event)"
+          (correctionRequested)="requestCorrection($event)"
+        />
+      </section>
+    }
+
+    <!-- Leave balances -->
+    @case ('leave') {
+      <div @fadeInUp class="space-y-6">
+        <div>
+          <p class="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Balances for {{ p.leave.year }}</p>
+          @if (p.leave.balances.length) {
+            <app-leave-balances [balances]="p.leave.balances" />
+          } @else {
+            <app-empty-state [compact]="true" art="calendar" tone="amber" title="No leave types configured" />
+          }
+        </div>
+        <section class="card card-pad">
+          <h3 class="section-title mb-4">Recent requests</h3>
+          @if (p.leave.recent.length === 0) {
+            <app-empty-state [compact]="true" art="calendar" tone="amber" title="No leave requested yet" />
+          } @else {
+            <ul class="divide-y divide-slate-100 dark:divide-slate-800">
+              @for (l of p.leave.recent; track l.id) {
+                <li class="flex flex-wrap items-center justify-between gap-2 py-3">
+                  <div>
+                    <p class="font-semibold text-slate-900 dark:text-white">{{ l.leaveTypeName }} · {{ l.workingDays }} day{{ l.workingDays === 1 ? '' : 's' }}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">{{ l.startDate | day }} → {{ l.endDate | day }}@if (l.reason) { · {{ l.reason }}}</p>
+                  </div>
+                  <app-status-badge [status]="l.status" />
+                </li>
+              }
+            </ul>
+          }
+        </section>
+      </div>
+    }
+
+    <!-- Salary breakdown -->
+    @case ('salary') {
+      @if (salary(); as s) {
+        <div @fadeInUp class="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+          <section class="card card-pad">
+            <h3 class="section-title mb-1">Monthly salary structure</h3>
+            <p class="mb-5 text-xs text-slate-500 dark:text-slate-400">HRA 40% and medical 10% of basic · gross = 1.5 × basic</p>
+            <div class="flex h-4 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+              @for (seg of salarySegments(); track seg.label) {
+                <div class="h-full border-r-2 border-white transition-all duration-700 last:border-r-0 dark:border-slate-900" [class]="seg.cls" [style.width.%]="seg.pct" [title]="seg.label + ' ' + money(seg.value)"></div>
+              }
+            </div>
+            <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+              @for (seg of salarySegments(); track seg.label) {
+                <li class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-sm" [class]="seg.cls"></span>{{ seg.label }} {{ seg.pct | pct: 0 }}</li>
+              }
+            </ul>
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex justify-between"><dt class="text-slate-500 dark:text-slate-400">Basic</dt><dd class="num font-semibold">{{ s.basic | money }}</dd></div>
+              <div class="flex justify-between"><dt class="text-slate-500 dark:text-slate-400">House rent allowance (40%)</dt><dd class="num font-semibold">{{ s.hra | money }}</dd></div>
+              <div class="flex justify-between"><dt class="text-slate-500 dark:text-slate-400">Medical allowance (10%)</dt><dd class="num font-semibold">{{ s.medical | money }}</dd></div>
+              <div class="flex justify-between border-t border-dashed border-slate-200 pt-3 text-base dark:border-slate-700"><dt class="font-bold">Gross</dt><dd class="num font-extrabold">{{ s.gross | money }}</dd></div>
+              <div class="flex justify-between"><dt class="text-slate-500 dark:text-slate-400">Income tax (monthly)</dt><dd class="num font-semibold text-rose-600 dark:text-rose-400">− {{ s.monthlyTax | money }}</dd></div>
+              <div class="flex justify-between rounded-2xl bg-emerald-50 px-4 py-3 text-base dark:bg-emerald-500/10"><dt class="font-bold text-emerald-800 dark:text-emerald-200">Net (full month)</dt><dd class="num font-extrabold text-emerald-700 dark:text-emerald-300">{{ netMonthly() | money }}</dd></div>
+            </dl>
+          </section>
+          <section class="card card-pad">
+            <h3 class="section-title mb-4">Annual view</h3>
+            <dl class="space-y-3 text-sm">
+              <div class="flex justify-between"><dt class="text-slate-500 dark:text-slate-400">Annual gross</dt><dd class="num font-semibold">{{ s.gross * 12 | money }}</dd></div>
+              <div class="flex justify-between"><dt class="text-slate-500 dark:text-slate-400">Annual tax</dt><dd class="num font-semibold text-rose-600 dark:text-rose-400">{{ s.monthlyTax * 12 | money }}</dd></div>
+              <div class="flex justify-between"><dt class="text-slate-500 dark:text-slate-400">Annual net</dt><dd class="num font-semibold">{{ netMonthly() * 12 | money }}</dd></div>
+            </dl>
+            <p class="mt-5 rounded-2xl bg-slate-50 p-3.5 text-xs leading-relaxed text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
+              Payroll prorates for joiners/leavers and deducts absent days, unpaid leave and half days (½ day each) at gross ÷ working days of the month.
+            </p>
+          </section>
+        </div>
+      }
+    }
+
+    <!-- Payslips -->
+    @case ('payslips') {
+      <section @fadeInUp class="card card-pad">
+        <h3 class="section-title mb-4">Payslips</h3>
+        @if (p.payroll.recentPayslips.length === 0) {
+          <app-empty-state [compact]="true" art="payroll" tone="emerald" title="No payslips yet" [description]="isOwn() ? 'Payslips appear after Admin finalizes a payroll month.' : 'Payslips appear after HR generates payroll for a month.'" />
+        } @else {
+          <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" [@listStagger]="p.payroll.recentPayslips.length">
+            @for (ps of p.payroll.recentPayslips; track ps.id) {
+              <article class="rounded-2xl border border-slate-200 p-4 transition hover:-translate-y-0.5 hover:shadow-lg dark:border-slate-800">
+                <div class="flex items-center justify-between">
+                  <p class="font-semibold text-slate-900 dark:text-white">{{ ps.month | month }}</p>
+                  <app-status-badge [status]="ps.status" />
+                </div>
+                <p class="mt-3 text-2xl font-extrabold text-slate-900 dark:text-white">{{ ps.netPay | money: ps.currency }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Net · gross {{ ps.gross | money: ps.currency }}</p>
+                <div class="mt-4 flex gap-2">
+                  <button type="button" class="btn btn-secondary btn-sm flex-1" (click)="viewing.set(ps)"><lucide-icon [img]="icons.Eye" [size]="14" /> View</button>
+                  <button type="button" class="btn btn-primary btn-sm flex-1" (click)="files.downloadPayslip(ps.id, ps.month)" [disabled]="files.downloadingPayslip() === ps.id">
+                    <lucide-icon [img]="files.downloadingPayslip() === ps.id ? icons.LoaderCircle : icons.Download" [size]="14" [class.animate-spin]="files.downloadingPayslip() === ps.id" /> PDF
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </section>
+    }
+  }
+
+  <app-payslip-viewer [payslip]="viewing()" (closed)="viewing.set(null)" />
+  @if (canEditJob()) {
+    <app-employee-form [open]="editOpen()" [employee]="e" [departments]="departments()" [designations]="designations()" (closed)="editOpen.set(false)" (updated)="onUpdated($event)" />
+  }
+}

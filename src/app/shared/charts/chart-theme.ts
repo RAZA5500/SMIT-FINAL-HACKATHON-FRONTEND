@@ -1,4 +1,4 @@
-import type { ChartOptions, Plugin, ScriptableContext, TooltipItem } from 'chart.js';
+import type { ChartOptions, ChartType, Plugin, ScriptableContext, TooltipItem } from 'chart.js';
 
 /**
  * Chart styling for HCM Lite (dataviz method): thin bars (≤24px, 4px rounded data-end,
@@ -52,8 +52,8 @@ export function alpha(hex: string, a: number): string {
 }
 
 /** Scriptable gradient along the value axis (base → tip). */
-export function gradientFill(hex: string, fromAlpha: number, toAlpha: number, horizontal = false) {
-  return (ctx: ScriptableContext<'bar' | 'line'>) => {
+export function gradientFill<T extends ChartType>(hex: string, fromAlpha: number, toAlpha: number, horizontal = false) {
+  return (ctx: ScriptableContext<T>): string | CanvasGradient => {
     const { chart } = ctx;
     const area = chart.chartArea;
     if (!area) return alpha(hex, toAlpha);

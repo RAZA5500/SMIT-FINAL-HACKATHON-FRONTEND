@@ -59,7 +59,8 @@ export interface ChartTable {
           </div>
         } @else if (empty()) {
           <app-empty-state [compact]="true" [art]="emptyArt()" tone="slate" [title]="emptyTitle()" [description]="emptyText()" />
-        } @else if (showTable() && table(); as t) {
+        } @else if (showTable() && table()) {
+          @let t = table()!;
           <div class="table-wrap scroll-thin max-h-80 rounded-xl border border-slate-100 dark:border-slate-800">
             <table class="data-table">
               <thead>
