@@ -5,11 +5,15 @@
 /tmp
 /out-tsc
 /bazel-out
+*.tsbuildinfo
 
 # Node
 /node_modules
-npm-debug.log
-yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
 
 # IDEs and editors
 .idea/
@@ -19,6 +23,7 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
+*.swp
 
 # Visual Studio Code
 .vscode/*
@@ -26,10 +31,22 @@ yarn-error.log
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.history/*
+.history/
+
+# Angular
+/.angular/
+
+# Environment / secrets (API URLs live in src/environments, which stay tracked)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Deploy tooling
+.vercel/
 
 # Miscellaneous
-/.angular/cache
 .sass-cache/
 /connect.lock
 /coverage
@@ -40,3 +57,4 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+desktop.ini
