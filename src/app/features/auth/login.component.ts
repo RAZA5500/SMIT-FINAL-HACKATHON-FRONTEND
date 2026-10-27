@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,10 +12,39 @@ import { FieldErrorComponent } from '../../shared/ui/field-error.component';
 import { Icons } from '../../shared/ui/icons';
 import { AuthLayoutComponent } from './auth-layout.component';
 
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+/** Step 1 (email) slides up and away on Next, and drops back in on Edit. */
+const emailStep = trigger('emailStep', [
+  transition(':enter', [
+    style({ opacity: 0, transform: 'translateY(-18px)', height: 0, overflow: 'hidden' }),
+    animate(`380ms 140ms ${EASE}`, style({ opacity: 1, transform: 'none', height: '*' })),
+  ]),
+  transition(':leave', [style({ overflow: 'hidden' }), animate(`320ms ${EASE}`, style({ opacity: 0, transform: 'translateY(-32px)', height: 0 }))]),
+]);
+
+/** The entered email settles at the top as a compact chip. */
+const chipStep = trigger('chipStep', [
+  transition(':enter', [
+    style({ opacity: 0, transform: 'translateY(-10px) scale(0.97)', height: 0, overflow: 'hidden' }),
+    animate(`360ms 80ms ${EASE}`, style({ opacity: 1, transform: 'none', height: '*' })),
+  ]),
+  transition(':leave', [style({ overflow: 'hidden' }), animate(`260ms ${EASE}`, style({ opacity: 0, transform: 'translateY(-10px) scale(0.97)', height: 0 }))]),
+]);
+
+/** Step 2 (password) rises in from below. */
+const passwordStep = trigger('passwordStep', [
+  transition(':enter', [
+    style({ opacity: 0, transform: 'translateY(28px)', height: 0, overflow: 'hidden' }),
+    animate(`420ms 160ms ${EASE}`, style({ opacity: 1, transform: 'none', height: '*' })),
+  ]),
+  transition(':leave', [style({ overflow: 'hidden' }), animate(`280ms ${EASE}`, style({ opacity: 0, transform: 'translateY(28px)', height: 0 }))]),
+]);
+
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, LucideAngularModule, AuthLayoutComponent, FieldErrorComponent],
-  animations: [fadeInUp],
+  animations: [fadeInUp, emailStep, chipStep, passwordStep],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-auth-layout>
@@ -22,70 +52,116 @@ import { AuthLayoutComponent } from './auth-layout.component';
         <h1 class="text-[2rem] font-semibold tracking-tight text-slate-900 dark:text-white">
           Welcome back <span class="wave inline-block origin-[70%_70%]" aria-hidden="true">👋</span>
         </h1>
-        <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">Sign in with the email your Admin or HR registered for you.</p>
+        <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+          {{ step() === 'email' ? 'Sign in with the email your Admin or HR registered for you.' : 'Now enter your password to continue.' }}
+        </p>
 
         <!-- rotating gradient rim around the form -->
         <div class="frame mt-6" [class.shake]="shake()">
           <form [formGroup]="form" (ngSubmit)="submit()" class="card relative space-y-4 rounded-[19px] border-0 p-6 shadow-lift sm:p-7">
-            <div>
-              <label class="label" for="email">Email</label>
-              <div class="group relative">
-                <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-200 group-focus-within:text-blue-500"><lucide-icon [img]="icons.Mail" [size]="17" /></span>
-                <input id="email" type="email" class="input pl-10" formControlName="email" placeholder="you@company.com" autocomplete="username" />
-                @if (emailLooksValid()) {
-                  <span class="check absolute right-3 top-1/2 grid h-5 w-5 -translate-y-1/2 place-items-center rounded-full bg-blue-500 text-white" aria-hidden="true">
-                    <lucide-icon [img]="icons.Check" [size]="12" [strokeWidth]="3" />
-                  </span>
-                }
-              </div>
-              <app-field-error [control]="form.controls.email" label="Email" [show]="attempted()" />
+            <!-- two-step progress -->
+            <div class="flex items-center gap-2" aria-hidden="true">
+              <span class="h-1 flex-1 rounded-full bg-blue-500"></span>
+              <span class="relative h-1 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                <span class="absolute inset-0 origin-left rounded-full bg-blue-500 transition-transform duration-500 ease-spring" [class.scale-x-0]="step() === 'email'"></span>
+              </span>
             </div>
-            <div>
-              <label class="label" for="password">Password</label>
-              <div class="group relative">
-                <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-200 group-focus-within:text-blue-500"><lucide-icon [img]="icons.LockKeyhole" [size]="17" /></span>
-                <input
-                  id="password"
-                  [type]="show() ? 'text' : 'password'"
-                  class="input px-10"
-                  formControlName="password"
-                  placeholder="••••••••"
-                  autocomplete="current-password"
-                  (keydown)="trackCapsLock($event)"
-                  (keyup)="trackCapsLock($event)"
-                  (blur)="capsLock.set(false)"
-                />
-                <button
-                  type="button"
-                  class="absolute inset-y-0 right-0 grid w-11 place-items-center text-slate-400 transition hover:text-slate-700 active:scale-90 dark:hover:text-slate-200"
-                  (click)="show.set(!show())"
-                  [attr.aria-label]="show() ? 'Hide password' : 'Show password'"
-                >
-                  <lucide-icon [img]="show() ? icons.EyeOff : icons.Eye" [size]="17" />
+            <p class="sr-only" aria-live="polite">Step {{ step() === 'email' ? 1 : 2 }} of 2</p>
+
+            @if (step() === 'email') {
+              <!-- Step 1: email, slides up and away on Next -->
+              <div @emailStep class="space-y-4">
+                <div>
+                  <label class="label" for="email">Email</label>
+                  <div class="group relative">
+                    <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-200 group-focus-within:text-blue-500"><lucide-icon [img]="icons.Mail" [size]="17" /></span>
+                    <input #emailInput id="email" type="email" class="input pl-10" formControlName="email" placeholder="you@company.com" autocomplete="username" />
+                    @if (emailLooksValid()) {
+                      <span class="check absolute right-3 top-1/2 grid h-5 w-5 -translate-y-1/2 place-items-center rounded-full bg-blue-500 text-white" aria-hidden="true">
+                        <lucide-icon [img]="icons.Check" [size]="12" [strokeWidth]="3" />
+                      </span>
+                    }
+                  </div>
+                  <app-field-error [control]="form.controls.email" label="Email" [show]="attempted()" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg group w-full">
+                  Next
+                  <lucide-icon [img]="icons.ArrowRight" [size]="18" class="transition-transform duration-300 ease-spring group-hover:translate-x-1" />
                 </button>
               </div>
-              @if (capsLock()) {
-                <p @fadeInUp class="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
-                  <lucide-icon [img]="icons.TriangleAlert" [size]="13" /> Caps Lock is on
-                </p>
-              }
-              <app-field-error [control]="form.controls.password" label="Password" [show]="attempted()" />
-            </div>
+            } @else {
+              <!-- Step 2: the email lands as a chip with an Edit option… -->
+              <div @chipStep class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-2 pl-2.5 dark:border-slate-800 dark:bg-white/[0.03]">
+                <span class="icon-tile h-9 w-9 bg-blue-50 text-blue-600 ring-blue-200 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/25">
+                  <lucide-icon [img]="icons.Mail" [size]="16" />
+                </span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Signing in as</p>
+                  <p class="truncate text-sm font-medium text-slate-900 dark:text-white" [title]="emailValue()">{{ emailValue() }}</p>
+                </div>
+                <button type="button" class="btn btn-ghost btn-sm shrink-0 text-blue-600 hover:text-blue-700 dark:text-blue-400" (click)="editEmail()" aria-label="Edit email">
+                  <lucide-icon [img]="icons.Pencil" [size]="13" /> Edit
+                </button>
+              </div>
 
-            @if (error()) {
-              <p @fadeInUp class="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300">
-                <lucide-icon [img]="icons.CircleAlert" [size]="17" class="mt-0.5 shrink-0" /> {{ error() }}
-              </p>
+              <!-- …and the password field slides in from below -->
+              <div @passwordStep class="space-y-4">
+                <!-- keeps the address paired with the password for password managers -->
+                <input type="email" class="sr-only" tabindex="-1" aria-hidden="true" autocomplete="username" [value]="emailValue()" readonly />
+                <div>
+                  <label class="label" for="password">Password</label>
+                  <div class="group relative">
+                    <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-200 group-focus-within:text-blue-500"><lucide-icon [img]="icons.LockKeyhole" [size]="17" /></span>
+                    <input
+                      #passwordInput
+                      id="password"
+                      [type]="show() ? 'text' : 'password'"
+                      class="input px-10"
+                      formControlName="password"
+                      placeholder="••••••••"
+                      autocomplete="current-password"
+                      (keydown)="trackCapsLock($event)"
+                      (keyup)="trackCapsLock($event)"
+                      (blur)="capsLock.set(false)"
+                    />
+                    <button
+                      type="button"
+                      class="absolute inset-y-0 right-0 grid w-11 place-items-center text-slate-400 transition hover:text-slate-700 active:scale-90 dark:hover:text-slate-200"
+                      (click)="show.set(!show())"
+                      [attr.aria-label]="show() ? 'Hide password' : 'Show password'"
+                    >
+                      <lucide-icon [img]="show() ? icons.EyeOff : icons.Eye" [size]="17" />
+                    </button>
+                  </div>
+                  @if (capsLock()) {
+                    <p @fadeInUp class="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+                      <lucide-icon [img]="icons.TriangleAlert" [size]="13" /> Caps Lock is on
+                    </p>
+                  }
+                  <app-field-error [control]="form.controls.password" label="Password" [show]="attempted()" />
+                </div>
+
+                @if (error()) {
+                  <div @fadeInUp class="rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300">
+                    <p class="flex items-start gap-2"><lucide-icon [img]="icons.CircleAlert" [size]="17" class="mt-0.5 shrink-0" /> {{ error() }}</p>
+                    @if (credentialsRejected()) {
+                      <button type="button" class="ml-[25px] mt-1 inline-flex items-center gap-1 text-xs font-semibold text-rose-700 underline-offset-2 hover:underline dark:text-rose-300" (click)="editEmail()">
+                        <lucide-icon [img]="icons.Pencil" [size]="12" /> Wrong email? Change it
+                      </button>
+                    }
+                  </div>
+                }
+
+                <button type="submit" class="btn btn-primary btn-lg group w-full" [disabled]="loading()">
+                  @if (loading()) {
+                    <lucide-icon [img]="icons.LoaderCircle" [size]="18" class="animate-spin" /> Signing in…
+                  } @else {
+                    Sign in
+                    <lucide-icon [img]="icons.ArrowRight" [size]="18" class="transition-transform duration-300 ease-spring group-hover:translate-x-1" />
+                  }
+                </button>
+              </div>
             }
-
-            <button type="submit" class="btn btn-primary btn-lg group w-full" [disabled]="loading()">
-              @if (loading()) {
-                <lucide-icon [img]="icons.LoaderCircle" [size]="18" class="animate-spin" /> Signing in…
-              } @else {
-                Sign in
-                <lucide-icon [img]="icons.ArrowRight" [size]="18" class="transition-transform duration-300 ease-spring group-hover:translate-x-1" />
-              }
-            </button>
 
             <div class="flex items-center gap-3 text-[11px] font-medium uppercase tracking-wider text-slate-400">
               <span class="h-px flex-1 bg-slate-200 dark:bg-slate-800"></span>
@@ -221,7 +297,14 @@ export class LoginComponent {
   protected readonly error = signal('');
   protected readonly capsLock = signal(false);
   protected readonly shake = signal(false);
+  /** Two-step sign-in: the email first, then the password. */
+  protected readonly step = signal<'email' | 'password'>('email');
+  /** The server rejected the email/password pair (offer to fix the email). */
+  protected readonly credentialsRejected = signal(false);
   private shakeTimer: ReturnType<typeof setTimeout> | undefined;
+  private focusTimer: ReturnType<typeof setTimeout> | undefined;
+  private readonly emailInput = viewChild<ElementRef<HTMLInputElement>>('emailInput');
+  private readonly passwordInput = viewChild<ElementRef<HTMLInputElement>>('passwordInput');
 
   protected readonly roles = [
     { name: 'Admin', text: 'Company setup', icon: Icons.ShieldCheck, tint: 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' },
@@ -235,12 +318,15 @@ export class LoginComponent {
   });
 
   private readonly emailStatus = toSignal(this.form.controls.email.statusChanges, { initialValue: this.form.controls.email.status });
-  private readonly emailValue = toSignal(this.form.controls.email.valueChanges, { initialValue: '' });
+  protected readonly emailValue = toSignal(this.form.controls.email.valueChanges, { initialValue: '' });
   /** Green tick once the address is well-formed. */
   protected readonly emailLooksValid = computed(() => this.emailStatus() === 'VALID' && this.emailValue().includes('.'));
 
   constructor() {
-    inject(DestroyRef).onDestroy(() => clearTimeout(this.shakeTimer));
+    inject(DestroyRef).onDestroy(() => {
+      clearTimeout(this.shakeTimer);
+      clearTimeout(this.focusTimer);
+    });
     // A stale "incorrect password" message disappears as soon as the user edits either field.
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.error.set(''));
   }
@@ -259,7 +345,42 @@ export class LoginComponent {
     });
   }
 
+  /** Step 1 → 2: only a well-formed email moves on. */
+  private next(): void {
+    const email = this.form.controls.email;
+    email.markAsTouched();
+    if (email.invalid) {
+      this.attempted.set(true);
+      this.nudge();
+      return;
+    }
+    this.attempted.set(false);
+    this.error.set('');
+    this.step.set('password');
+    this.focusLater(() => this.passwordInput()?.nativeElement.focus());
+  }
+
+  /** Back to step 1 with the address selected, ready to fix. */
+  protected editEmail(): void {
+    this.error.set('');
+    this.credentialsRejected.set(false);
+    this.attempted.set(false);
+    this.capsLock.set(false);
+    this.step.set('email');
+    this.focusLater(() => this.emailInput()?.nativeElement.select());
+  }
+
+  /** Focus once the incoming step has rendered (mid-animation is fine). */
+  private focusLater(fn: () => void): void {
+    clearTimeout(this.focusTimer);
+    this.focusTimer = setTimeout(fn, 80);
+  }
+
   protected submit(): void {
+    if (this.step() === 'email') {
+      this.next();
+      return;
+    }
     this.attempted.set(true);
     this.form.markAllAsTouched();
     if (this.form.invalid) {
@@ -269,6 +390,7 @@ export class LoginComponent {
     const { email, password } = this.form.getRawValue();
     this.loading.set(true);
     this.error.set('');
+    this.credentialsRejected.set(false);
     this.auth.login(email.trim().toLowerCase(), password).subscribe({
       next: (res) => {
         this.loading.set(false);
@@ -285,6 +407,7 @@ export class LoginComponent {
         this.loading.set(false);
         this.nudge();
         const status = apiStatus(err);
+        this.credentialsRejected.set(status === 401);
         this.error.set(
           status === 401 ? 'Incorrect email or password.' : status === 429 ? 'Too many sign-in attempts. Please wait a minute and try again.' : apiErrorMessage(err),
         );
