@@ -1,8 +1,6 @@
 <app-page-header
   title="Employees"
   [subtitle]="totalInCompany() !== null ? totalInCompany() + ' people in the directory' : 'Directory, search and Employee 360 profiles'"
-  [icon]="icons.Users"
-  tone="emerald"
 >
   @if (canManage()) {
     <button type="button" class="btn btn-secondary" (click)="exportCsv()" [disabled]="exporting() || !totalInCompany()">
@@ -11,18 +9,18 @@
     <button type="button" class="btn btn-secondary" (click)="importOpen.set(true)"><lucide-icon [img]="icons.Upload" [size]="16" /> Import CSV</button>
     <button type="button" class="btn btn-primary" (click)="openRegister()"><lucide-icon [img]="icons.UserPlus" [size]="16" /> Register employee</button>
   } @else {
-    <span class="badge bg-slate-100 py-1 text-slate-600 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700"><lucide-icon [img]="icons.Eye" [size]="12" /> View only</span>
+    <span class="badge bg-white py-1 text-slate-600 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700"><lucide-icon [img]="icons.Eye" [size]="12" /> View only</span>
   }
 </app-page-header>
 
 <!-- Toolbar -->
-<section class="card mb-5 space-y-3 p-3 sm:p-4">
+<section class="mb-5 space-y-3" aria-label="Directory filters">
   <div class="flex flex-col gap-3 lg:flex-row lg:items-center">
     <div class="relative flex-1">
-      <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><lucide-icon [img]="icons.Search" [size]="17" /></span>
-      <input class="input pl-10" [formControl]="search" placeholder="Search by name, code, email or phone…" aria-label="Search employees" />
+      <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><lucide-icon [img]="icons.Search" [size]="16" /></span>
+      <input class="input pl-9" [formControl]="search" placeholder="Search by name, code, email or phone…" aria-label="Search employees" />
       @if (loading() && everLoaded()) {
-        <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-500"><lucide-icon [img]="icons.LoaderCircle" [size]="16" class="animate-spin" /></span>
+        <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"><lucide-icon [img]="icons.LoaderCircle" [size]="16" class="animate-spin" /></span>
       }
     </div>
     <div class="flex flex-wrap items-center gap-2">
@@ -31,29 +29,29 @@
           <button type="button" class="pill" [class.pill-active]="status() === s.id" (click)="setStatus(s.id)">{{ s.label }}</button>
         }
       </div>
-      <select class="input w-auto py-2 text-xs font-semibold" [value]="designationId()" (change)="setDesignation($any($event.target).value)" aria-label="Designation filter">
+      <select class="input w-auto" [value]="designationId()" (change)="setDesignation($any($event.target).value)" aria-label="Designation filter">
         <option value="">All designations</option>
         @for (d of designations(); track d.id) {
           <option [value]="d.id">{{ d.name }}</option>
         }
       </select>
-      <div class="flex rounded-xl border border-slate-200 bg-slate-100/80 p-0.5 dark:border-slate-800 dark:bg-slate-900" role="group" aria-label="View mode">
-        <button type="button" class="rounded-lg p-2 transition" [class]="view() === 'grid' ? 'bg-white text-slate-900 shadow dark:bg-slate-700 dark:text-white' : 'text-slate-500'" (click)="setView('grid')" aria-label="Grid view" [attr.aria-pressed]="view() === 'grid'">
-          <lucide-icon [img]="icons.LayoutGrid" [size]="16" />
-        </button>
-        <button type="button" class="rounded-lg p-2 transition" [class]="view() === 'table' ? 'bg-white text-slate-900 shadow dark:bg-slate-700 dark:text-white' : 'text-slate-500'" (click)="setView('table')" aria-label="Table view" [attr.aria-pressed]="view() === 'table'">
+      <div class="inline-flex rounded-md border border-slate-200 bg-white p-0.5 shadow-xs dark:border-slate-700 dark:bg-slate-900" role="group" aria-label="View mode">
+        <button type="button" class="rounded p-1.5 transition-colors" [class]="view() === 'table' ? 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'" (click)="setView('table')" aria-label="Table view" [attr.aria-pressed]="view() === 'table'">
           <lucide-icon [img]="icons.List" [size]="16" />
+        </button>
+        <button type="button" class="rounded p-1.5 transition-colors" [class]="view() === 'grid' ? 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'" (click)="setView('grid')" aria-label="Grid view" [attr.aria-pressed]="view() === 'grid'">
+          <lucide-icon [img]="icons.LayoutGrid" [size]="16" />
         </button>
       </div>
     </div>
   </div>
   @if (departments().length) {
-    <div class="scroll-thin -mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-0.5">
-      <span class="mr-1 shrink-0 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Department</span>
+    <div class="flex flex-wrap items-center gap-1.5">
+      <span class="mr-1 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">Department</span>
       <button type="button" class="pill shrink-0" [class.pill-active]="!departmentId()" (click)="setDepartment('')">All</button>
       @for (d of departments(); track d.id) {
         <button type="button" class="pill shrink-0" [class.pill-active]="departmentId() === d.id" (click)="setDepartment(d.id)">
-          {{ d.name }} <span class="rounded-full bg-black/5 px-1.5 text-[10px] dark:bg-white/10">{{ d.employeeCount ?? 0 }}</span>
+          {{ d.name }} <span class="num text-xs opacity-60">{{ d.employeeCount ?? 0 }}</span>
         </button>
       }
     </div>
@@ -69,13 +67,12 @@
   </div>
 } @else if (employees().length === 0) {
   @if (hasFilters()) {
-    <app-empty-state art="search" tone="slate" title="No employees match these filters" description="Try a different search term or clear the filters.">
+    <app-empty-state art="search" title="No employees match these filters" description="Try a different search term or clear the filters.">
       <button type="button" class="btn btn-secondary" (click)="clearFilters()"><lucide-icon [img]="icons.RotateCcw" [size]="16" /> Clear filters</button>
     </app-empty-state>
   } @else {
     <app-empty-state
       art="team"
-      tone="emerald"
       title="No employees registered"
       [description]="canManage() ? 'Register people one by one — each gets a login with a temporary password — or bulk-import a CSV with dry-run validation.' : 'HR registers employees. They will appear here as soon as they are added.'"
     >
@@ -90,24 +87,23 @@
     @if (view() === 'grid') {
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" [@listStagger]="employees().length">
         @for (e of employees(); track e.id) {
-          <a [routerLink]="['/employees', e.id]" class="card card-hover group relative flex flex-col overflow-hidden p-5">
-            <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-emerald-400/10 blur-2xl transition-opacity group-hover:opacity-100"></div>
-            <div class="relative flex items-start justify-between gap-3">
-              <app-avatar [name]="e.fullName" size="lg" />
+          <a [routerLink]="['/employees', e.id]" class="card card-hover group relative flex flex-col p-5">
+            <div class="flex items-start justify-between gap-3">
+              <app-avatar [name]="e.fullName" size="md" />
               <app-status-badge [status]="e.status" />
             </div>
-            <p class="relative mt-3 truncate text-base font-bold text-slate-900 dark:text-white">{{ e.fullName }}</p>
-            <p class="relative truncate text-sm text-slate-500 dark:text-slate-400">{{ e.designation.name || '—' }}</p>
-            <div class="relative mt-3 flex flex-wrap gap-1.5">
-              <span class="badge bg-slate-100 font-mono text-slate-600 ring-slate-300/60 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">{{ e.code }}</span>
-              <span class="badge bg-teal-50 text-teal-700 ring-teal-600/20 dark:bg-teal-500/10 dark:text-teal-300">{{ e.department.name || '—' }}</span>
+            <p class="mt-3 truncate text-sm font-semibold text-slate-900 dark:text-white">{{ e.fullName }}</p>
+            <p class="truncate text-sm text-slate-500 dark:text-slate-400">{{ e.designation.name || '—' }}</p>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="badge num bg-slate-100 text-slate-600 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">{{ e.code }}</span>
+              <span class="badge bg-white text-slate-600 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">{{ e.department.name || '—' }}</span>
             </div>
-            <div class="relative mt-4 space-y-1.5 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+            <div class="mt-4 space-y-1.5 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
               <p class="flex items-center gap-2 truncate"><lucide-icon [img]="icons.Mail" [size]="13" /> {{ e.email }}</p>
               <p class="flex items-center gap-2"><lucide-icon [img]="icons.CalendarDays" [size]="13" /> Joined {{ e.joinDate | day }}</p>
             </div>
             @if (canManage()) {
-              <button type="button" class="absolute bottom-4 right-4 grid h-8 w-8 place-items-center rounded-xl bg-white text-slate-500 opacity-0 shadow-md ring-1 ring-slate-200 transition group-hover:opacity-100 hover:text-emerald-600 dark:bg-slate-800 dark:ring-slate-700" (click)="openEdit(e, $event)" [attr.aria-label]="'Edit ' + e.fullName">
+              <button type="button" class="absolute bottom-4 right-4 grid h-8 w-8 place-items-center rounded-md bg-white text-slate-500 opacity-0 shadow-xs ring-1 ring-slate-200 transition group-hover:opacity-100 hover:text-slate-900 focus-visible:opacity-100 dark:bg-slate-800 dark:ring-slate-700 dark:hover:text-white" (click)="openEdit(e, $event)" [attr.aria-label]="'Edit ' + e.fullName">
                 <lucide-icon [img]="icons.Pencil" [size]="14" />
               </button>
             }
@@ -144,7 +140,7 @@
                       </div>
                     </div>
                   </td>
-                  <td class="font-mono text-xs">{{ e.code }}</td>
+                  <td class="num text-xs">{{ e.code }}</td>
                   <td class="hidden md:table-cell">{{ e.department.name || '—' }}</td>
                   <td class="hidden lg:table-cell">{{ e.designation.name || '—' }}</td>
                   <td><app-status-badge [status]="e.status" /></td>

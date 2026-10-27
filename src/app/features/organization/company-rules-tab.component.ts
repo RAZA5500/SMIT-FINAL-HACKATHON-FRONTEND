@@ -32,7 +32,7 @@ import { Icons } from '../../shared/ui/icons';
         <!-- Company & work rules -->
         <section class="card card-pad space-y-5">
           <header class="flex items-center gap-3">
-            <span class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"><lucide-icon [img]="icons.Clock" [size]="19" /></span>
+            <span class="grid h-9 w-9 place-items-center rounded-md bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700"><lucide-icon [img]="icons.Clock" [size]="19" /></span>
             <div>
               <h2 class="section-title">Company & work rules</h2>
               <p class="text-xs text-slate-500 dark:text-slate-400">Changes apply to new attendance records and payroll runs only.</p>
@@ -85,9 +85,9 @@ import { Icons } from '../../shared/ui/icons';
                 }
               </div>
             </div>
-            <label class="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+            <label class="flex items-center justify-between gap-4 rounded-lg border border-slate-200 p-4 dark:border-slate-800">
               <span>
-                <span class="block text-sm font-semibold text-slate-800 dark:text-slate-100">Late penalty rule <span class="badge ml-1 bg-violet-50 text-violet-700 ring-violet-600/20 dark:bg-violet-500/10 dark:text-violet-300">Bonus</span></span>
+                <span class="block text-sm font-semibold text-slate-800 dark:text-slate-100">Late penalty rule <span class="badge ml-1 bg-slate-100 text-slate-600 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">Bonus</span></span>
                 <span class="block text-xs text-slate-500 dark:text-slate-400">3 lates in a month = 0.5 day deduction in payroll.</span>
               </span>
               <input type="checkbox" class="switch" formControlName="latePenaltyRuleEnabled" />
@@ -95,17 +95,18 @@ import { Icons } from '../../shared/ui/icons';
           } @else {
             <dl class="grid grid-cols-2 gap-3">
               @for (item of readOnlyItems(); track item.label) {
-                <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-900/50">
-                  <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">{{ item.label }}</dt>
+                <div class="rounded-lg border border-slate-200 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-900/50">
+                  <dt class="text-xs font-medium text-slate-400">{{ item.label }}</dt>
                   <dd class="mt-1 font-semibold text-slate-900 dark:text-white">{{ item.value }}</dd>
                 </div>
               }
             </dl>
             <div class="flex flex-wrap gap-1.5">
               @for (day of s.weekendDays; track day) {
-                <span class="badge bg-slate-100 text-slate-700 ring-slate-300 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700">{{ day }}</span>
+                <span class="badge bg-slate-100 text-slate-700 ring-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700">{{ day }}</span>
               }
-              <span class="badge" [class]="s.latePenaltyRuleEnabled ? 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300' : 'bg-slate-100 text-slate-500 ring-slate-300 dark:bg-slate-800 dark:ring-slate-700'">
+              <span class="badge bg-white text-slate-700 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">
+                <span class="h-1.5 w-1.5 rounded-full" [class]="s.latePenaltyRuleEnabled ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-600'"></span>
                 Late penalty {{ s.latePenaltyRuleEnabled ? 'on' : 'off' }}
               </span>
             </div>
@@ -115,7 +116,7 @@ import { Icons } from '../../shared/ui/icons';
         <!-- Geofence -->
         <section class="card card-pad space-y-5">
           <header class="flex items-center gap-3">
-            <span class="grid h-10 w-10 place-items-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400"><lucide-icon [img]="icons.MapPin" [size]="19" /></span>
+            <span class="grid h-9 w-9 place-items-center rounded-md bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700"><lucide-icon [img]="icons.MapPin" [size]="19" /></span>
             <div>
               <h2 class="section-title">Office geofence</h2>
               <p class="text-xs text-slate-500 dark:text-slate-400">Camera check-ins are accepted only inside this radius.</p>
@@ -129,7 +130,7 @@ import { Icons } from '../../shared/ui/icons';
                   Use my current GPS location
                 </button>
                 @if (geoError()) {
-                  <p class="rounded-xl bg-rose-50 p-2.5 text-xs text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">{{ geoError() }}</p>
+                  <p class="rounded-lg bg-rose-50 p-2.5 text-xs text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">{{ geoError() }}</p>
                 }
                 <div class="grid grid-cols-2 gap-3">
                   <div>
@@ -142,7 +143,7 @@ import { Icons } from '../../shared/ui/icons';
                   </div>
                 </div>
               } @else {
-                <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-3.5 font-mono text-sm dark:border-slate-800 dark:bg-slate-900/50">
+                <div class="rounded-lg border border-slate-200 bg-slate-50/70 p-3.5 font-mono text-sm dark:border-slate-800 dark:bg-slate-900/50">
                   @if (s.officeLocation.lat !== null) {
                     {{ s.officeLocation.lat }}, {{ s.officeLocation.lng }}
                   } @else {
@@ -153,14 +154,14 @@ import { Icons } from '../../shared/ui/icons';
               <div>
                 <div class="flex items-center justify-between">
                   <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">Radius</span>
-                  <span class="rounded-lg bg-emerald-500/10 px-2.5 py-1 font-mono text-sm font-bold text-emerald-700 dark:text-emerald-300">{{ radiusLabel() }}</span>
+                  <span class="num rounded-md bg-slate-100 px-2 py-0.5 text-sm font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200">{{ radiusLabel() }}</span>
                 </div>
                 @if (canEdit()) {
                   <input type="range" min="25" max="1000" step="5" class="range mt-3" formControlName="radiusMeters" aria-label="Geofence radius" />
                 }
               </div>
               @if (mapsUrl(); as url) {
-                <a [href]="url" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 hover:underline dark:text-emerald-400">
+                <a [href]="url" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 hover:underline dark:text-blue-400">
                   <lucide-icon [img]="icons.MapPin" [size]="13" /> View on Google Maps <lucide-icon [img]="icons.ArrowUpRight" [size]="12" />
                 </a>
               }
@@ -174,7 +175,7 @@ import { Icons } from '../../shared/ui/icons';
 
         @if (canEdit()) {
           <div class="sticky bottom-4 z-10 lg:col-span-2">
-            <div class="glass flex flex-col items-center justify-between gap-3 rounded-2xl px-4 py-3 shadow-lift sm:flex-row">
+            <div class="glass flex flex-col items-center justify-between gap-3 rounded-lg px-4 py-3 shadow-lift sm:flex-row">
               <p class="text-sm text-slate-600 dark:text-slate-300">
                 @if (form.dirty) {
                   <span class="inline-flex items-center gap-1.5 font-semibold text-amber-700 dark:text-amber-300"><lucide-icon [img]="icons.CircleAlert" [size]="15" /> Unsaved changes</span>

@@ -31,37 +31,36 @@ interface SetupStep {
   template: `
     @if (steps(); as list) {
       @if (!allDone()) {
-        <section class="card relative mb-6 overflow-hidden p-5 sm:p-6">
-          <div class="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-emerald-400/20 blur-3xl"></div>
-          <div class="relative flex flex-col gap-5 md:flex-row md:items-center">
-            <app-progress-ring [value]="progress()" [size]="96" [stroke]="9" tone="emerald">
-              <div>
-                <p class="text-xl font-extrabold text-slate-900 dark:text-white">{{ doneCount() }}/{{ list.length }}</p>
-                <p class="text-[10px] text-slate-500">steps</p>
-              </div>
+        <section class="card mb-6 p-5 sm:p-6">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center">
+            <app-progress-ring [value]="progress()" [size]="64" [stroke]="6" tone="emerald">
+              <p class="num text-sm font-semibold text-slate-900 dark:text-white">{{ doneCount() }}/{{ list.length }}</p>
             </app-progress-ring>
             <div class="flex-1">
-              <p class="eyebrow text-emerald-600 dark:text-emerald-400">Getting started</p>
-              <h2 class="mt-1 text-xl font-extrabold text-slate-900 dark:text-white">Set up {{ policies.companyName() }} in a few minutes</h2>
-              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Your database is empty — follow these steps so HR can start registering employees.</p>
+              <p class="eyebrow">Getting started</p>
+              <h2 class="mt-0.5 text-base font-semibold text-slate-900 dark:text-white">Set up {{ policies.companyName() }} in a few minutes</h2>
+              <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{{ intro() }}</p>
             </div>
           </div>
-          <ol class="relative mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3" [@listStagger]="list.length">
+          <ol class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3" [@listStagger]="list.length">
             @for (s of list; track s.id; let i = $index) {
-              <li class="flex items-start gap-3 rounded-2xl border p-3.5 transition" [class]="s.done ? 'border-emerald-200 bg-emerald-50/60 dark:border-emerald-500/20 dark:bg-emerald-500/5' : 'border-slate-200 bg-white/70 hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50'">
-                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl" [class]="s.done ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-300'">
-                  <lucide-icon [img]="s.done ? icons.Check : s.icon" [size]="16" [strokeWidth]="s.done ? 3 : 2" />
+              <li class="group flex items-start gap-3 rounded-xl border p-4 transition-all duration-300 ease-spring" [class]="s.done ? 'border-slate-200/70 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-950/40' : 'border-blue-200/80 bg-gradient-to-br from-blue-50/80 to-white shadow-xs hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-lift dark:border-blue-500/25 dark:from-blue-500/10 dark:to-slate-900 dark:hover:border-blue-500/40'">
+                <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full" [class]="s.done ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-slate-950' : 'bg-white text-blue-600 shadow-xs ring-1 ring-inset ring-blue-200 transition-transform duration-300 group-hover:scale-110 dark:bg-slate-900 dark:text-blue-400 dark:ring-blue-500/30'">
+                  <lucide-icon [img]="s.done ? icons.Check : s.icon" [size]="14" [strokeWidth]="s.done ? 3 : 2" />
                 </span>
                 <div class="min-w-0 flex-1">
-                  <p class="text-sm font-semibold" [class]="s.done ? 'text-emerald-800 line-through decoration-emerald-400/60 dark:text-emerald-300' : 'text-slate-900 dark:text-white'">
-                    {{ i + 1 }}. {{ s.title }}
+                  <p class="text-sm font-medium" [class]="s.done ? 'text-slate-500 dark:text-slate-400' : 'text-slate-900 dark:text-white'">
+                    {{ s.title }}
                     @if (s.optional) {
-                      <span class="ml-1 text-[10px] font-medium uppercase text-slate-400">optional</span>
+                      <span class="ml-1 text-xs font-normal text-slate-400">Optional</span>
+                    }
+                    @if (s.done) {
+                      <span class="sr-only">(done)</span>
                     }
                   </p>
                   <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ s.text }}</p>
                   @if (!s.done && s.link) {
-                    <a [routerLink]="s.link" [queryParams]="s.query" class="mt-2 inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:underline dark:text-emerald-400">
+                    <a [routerLink]="s.link" [queryParams]="s.query" class="mt-2.5 inline-flex items-center gap-1 rounded-full bg-blue-600 px-2.5 py-1 text-xs font-medium text-white shadow-glow-brand transition-all hover:gap-1.5 hover:bg-blue-700 dark:bg-blue-500 dark:text-slate-950">
                       {{ s.cta }} <lucide-icon [img]="icons.ArrowRight" [size]="12" />
                     </a>
                   }
@@ -87,6 +86,12 @@ export class GettingStartedComponent implements OnInit {
   protected readonly doneCount = computed(() => (this.steps() ?? []).filter((s) => s.done).length);
   protected readonly progress = computed(() => this.doneCount() / Math.max(1, this.steps()?.length ?? 1));
   protected readonly allDone = computed(() => (this.steps() ?? []).filter((s) => !s.optional).every((s) => s.done));
+  /** Copy follows progress: only a fresh install is told the database is empty. */
+  protected readonly intro = computed(() => {
+    const left = (this.steps() ?? []).filter((s) => !s.done && !s.optional).length;
+    if (this.doneCount() <= 1) return 'Your database is empty — follow these steps so HR can start registering employees.';
+    return left === 1 ? 'One step left — everything else is ready.' : `${left} steps left — pick up where you left off.`;
+  });
 
   ngOnInit(): void {
     const year = Number(this.policies.today().slice(0, 4));

@@ -1,20 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 export type EmptyArt = 'team' | 'org' | 'calendar' | 'payroll' | 'inbox' | 'megaphone' | 'chart' | 'search' | 'shield' | 'upload' | 'clock' | 'sparkles';
-type EmptyTone = 'emerald' | 'amber' | 'violet' | 'blue' | 'rose' | 'slate' | 'teal';
-
-const TONE_TEXT: Record<EmptyTone, string> = {
-  emerald: 'text-emerald-500',
-  teal: 'text-teal-500',
-  amber: 'text-amber-500',
-  violet: 'text-violet-500',
-  blue: 'text-blue-500',
-  rose: 'text-rose-500',
-  slate: 'text-slate-400',
-};
 
 /**
- * Guided empty state: custom illustration + clear guidance + direct call-to-action.
+ * Guided empty state: neutral line illustration + clear guidance + direct call-to-action.
  * Actions are projected: `<app-empty-state ...><button class="btn btn-primary">…</button></app-empty-state>`
  */
 @Component({
@@ -22,10 +11,22 @@ const TONE_TEXT: Record<EmptyTone, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="flex flex-col items-center justify-center text-center"
-      [class]="compact() ? 'px-4 py-8' : 'rounded-3xl border-2 border-dashed border-slate-200 bg-white/40 px-6 py-12 dark:border-slate-800 dark:bg-slate-900/30 sm:py-14'"
+      class="group relative isolate flex flex-col items-center justify-center overflow-hidden text-center"
+      [class]="
+        compact()
+          ? 'px-4 py-8'
+          : 'rounded-2xl border border-dashed border-slate-300/80 bg-gradient-to-b from-white to-blue-50/40 px-6 py-12 dark:border-slate-700 dark:from-slate-900 dark:to-blue-500/[0.04] sm:py-16'
+      "
     >
-      <svg viewBox="0 0 200 140" class="mb-5 animate-float" [class]="(compact() ? 'h-24 w-36 ' : 'h-32 w-48 ') + toneText()" aria-hidden="true">
+      @if (!compact()) {
+        <div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-6 -z-10 h-40 w-64 -translate-x-1/2 rounded-full bg-blue-300/25 blur-3xl dark:bg-blue-500/10"></div>
+      }
+      <svg
+        viewBox="0 0 200 140"
+        class="mb-4 text-blue-500 transition-transform duration-500 ease-spring group-hover:-translate-y-1 group-hover:scale-105 dark:text-blue-400"
+        [class]="compact() ? 'h-20 w-28' : 'h-28 w-40'"
+        aria-hidden="true"
+      >
         <!-- shared backdrop -->
         <ellipse cx="100" cy="74" rx="78" ry="52" fill="currentColor" opacity="0.08" />
         <ellipse cx="100" cy="128" rx="54" ry="5" class="fill-slate-900/10 dark:fill-black/40" />
@@ -117,9 +118,9 @@ const TONE_TEXT: Record<EmptyTone, string> = {
           }
         }
       </svg>
-      <h3 class="text-balance text-base font-bold text-slate-900 dark:text-white sm:text-lg">{{ title() }}</h3>
+      <h3 class="text-balance text-[15px] font-semibold text-slate-900 dark:text-white">{{ title() }}</h3>
       @if (description()) {
-        <p class="mt-1.5 max-w-md text-balance text-sm leading-relaxed text-slate-500 dark:text-slate-400">{{ description() }}</p>
+        <p class="mt-1 max-w-md text-balance text-sm leading-relaxed text-slate-500 dark:text-slate-400">{{ description() }}</p>
       }
       <div class="mt-5 flex flex-wrap items-center justify-center gap-2.5 empty:hidden">
         <ng-content />
@@ -129,12 +130,10 @@ const TONE_TEXT: Record<EmptyTone, string> = {
 })
 export class EmptyStateComponent {
   readonly art = input<EmptyArt>('inbox');
-  readonly tone = input<EmptyTone>('emerald');
   readonly title = input.required<string>();
   readonly description = input('');
   readonly compact = input(false);
 
-  protected readonly toneText = computed(() => TONE_TEXT[this.tone()]);
   protected readonly calendarCells = Array.from({ length: 12 }, (_, i) => ({
     x: 62 + (i % 4) * 20,
     y: 62 + Math.floor(i / 4) * 16,

@@ -53,10 +53,10 @@ import { ModalComponent } from '../ui/modal.component';
           <app-field-error [control]="form.controls.reason" label="Reason" [show]="submitted()" />
         </div>
         @if (error()) {
-          <p class="rounded-xl bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">{{ error() }}</p>
+          <p class="rounded-lg bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">{{ error() }}</p>
         }
       </form>
-      <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-secondary" (click)="store.closeCorrection()">Cancel</button>
         <button type="submit" form="correction-form" class="btn btn-primary" [disabled]="saving()">
           <lucide-icon [img]="saving() ? icons.LoaderCircle : icons.Send" [size]="16" [class.animate-spin]="saving()" />

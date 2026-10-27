@@ -42,7 +42,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
   animations: [listStagger],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header title="Logins & Access" subtitle="Every sign-in account. Employee logins are created automatically when HR registers someone." [icon]="icons.KeyRound" tone="navy">
+    <app-page-header title="Logins & Access" subtitle="Every sign-in account. Employee logins are created automatically when HR registers someone.">
       <button type="button" class="btn btn-primary" (click)="openCreate()"><lucide-icon [img]="icons.UserPlus" [size]="16" /> Create HR login</button>
     </app-page-header>
 
@@ -66,7 +66,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
           }
         </div>
       } @else if (users().length === 0) {
-        <app-empty-state art="team" tone="emerald" [title]="search.value || role() ? 'No logins match these filters' : 'Only your Admin login exists'" description="Create an HR login so people operations can start registering employees.">
+        <app-empty-state art="team" [title]="search.value || role() ? 'No logins match these filters' : 'Only your Admin login exists'" description="Create an HR login so people operations can start registering employees.">
           <button type="button" class="btn btn-primary" (click)="openCreate()"><lucide-icon [img]="icons.UserPlus" [size]="16" /> Create HR login</button>
         </app-empty-state>
       } @else {
@@ -98,7 +98,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
                     <div class="flex flex-wrap gap-1">
                       <app-status-badge [status]="u.isActive ? 'active' : 'inactive'" />
                       @if (u.mustChangePassword) {
-                        <span class="badge bg-amber-50 text-amber-800 ring-amber-600/25 dark:bg-amber-500/10 dark:text-amber-300"><lucide-icon [img]="icons.KeyRound" [size]="11" /> Temp password</span>
+                        <span class="badge bg-white text-slate-700 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700"><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span> Temp password</span>
                       }
                     </div>
                   </td>
@@ -111,7 +111,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
                       } @else if (u.role === 'HR' && u.employeeId) {
                         <button type="button" class="btn btn-ghost btn-sm" (click)="changeRole(u, 'Employee')" title="Demote to Employee"><lucide-icon [img]="icons.UserRound" [size]="14" /> <span class="hidden xl:inline">Make Employee</span></button>
                       }
-                      <button type="button" class="btn btn-ghost btn-sm" [class]="u.isActive ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'" (click)="toggleActive(u)">
+                      <button type="button" class="btn btn-ghost btn-sm" [class]="u.isActive ? 'text-rose-600 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400'" (click)="toggleActive(u)">
                         <lucide-icon [img]="u.isActive ? icons.Ban : icons.CircleCheck" [size]="14" /> <span class="hidden xl:inline">{{ u.isActive ? 'Deactivate' : 'Activate' }}</span>
                       </button>
                     } @else {
@@ -147,12 +147,12 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
           <app-field-error [control]="form.controls.password" label="Password" />
           <p class="field-hint">They must change it at first sign-in either way.</p>
         </div>
-        <p class="flex gap-2 rounded-2xl bg-slate-50 p-3 text-xs leading-relaxed text-slate-600 dark:bg-slate-900/60 dark:text-slate-300">
+        <p class="flex gap-2 rounded-lg bg-slate-50 p-3 text-xs leading-relaxed text-slate-600 dark:bg-slate-900/60 dark:text-slate-300">
           <lucide-icon [img]="icons.Info" [size]="15" class="mt-0.5 shrink-0 text-slate-400" />
           Want HR to also check in, apply for leave and receive payslips? Have them registered as an employee first, then use “Make HR” on their login.
         </p>
       </form>
-      <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-secondary" (click)="createOpen.set(false)">Cancel</button>
         <button type="submit" form="hr-form" class="btn btn-primary" [disabled]="saving()">
           <lucide-icon [img]="saving() ? icons.LoaderCircle : icons.Check" [size]="16" [class.animate-spin]="saving()" /> Create login

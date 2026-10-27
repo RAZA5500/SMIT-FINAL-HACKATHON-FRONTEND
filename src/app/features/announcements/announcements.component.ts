@@ -54,13 +54,12 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
       @if (loading()) {
         <div class="space-y-4">
           @for (i of [1, 2, 3]; track i) {
-            <div class="skeleton h-32 rounded-3xl"></div>
+            <div class="skeleton h-32 rounded-xl"></div>
           }
         </div>
       } @else if (announcements().length === 0) {
         <app-empty-state
           art="megaphone"
-          tone="amber"
           title="No announcements yet"
           description="Leadership or HR has not posted any announcements. Check back later for company updates."
         >
@@ -75,17 +74,17 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
           @for (a of announcements(); track a.id) {
             <article
               class="card card-hover relative overflow-hidden p-6 transition"
-              [class]="a.pinned ? 'border-amber-300/80 bg-amber-50/40 dark:border-amber-500/40 dark:bg-amber-500/5' : ''"
+              [class]="a.pinned ? 'border-slate-300 dark:border-slate-600' : ''"
             >
               @if (a.pinned) {
-                <div class="mb-3 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                <div class="mb-3 flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
                   <lucide-icon [img]="icons.Pin" [size]="13" /> Pinned announcement
                 </div>
               }
 
               <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div class="min-w-0 flex-1">
-                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ a.title }}</h3>
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">{{ a.title }}</h3>
                   <div class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300 whitespace-pre-line">
                     {{ a.body }}
                   </div>
@@ -152,7 +151,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
           <input
             id="ann-pinned"
             type="checkbox"
-            class="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400 dark:border-slate-700 dark:bg-slate-800"
+            class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600/40 dark:border-slate-700 dark:bg-slate-800"
             formControlName="pinned"
           />
           <label for="ann-pinned" class="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -161,12 +160,12 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
         </div>
 
         @if (error()) {
-          <p class="rounded-xl bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
+          <p class="rounded-lg bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
             {{ error() }}
           </p>
         }
 
-        <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+        <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
           <button type="button" class="btn btn-secondary" (click)="modalOpen.set(false)">Cancel</button>
           <button type="submit" class="btn btn-primary" [disabled]="submitting()">
             <lucide-icon [img]="submitting() ? icons.LoaderCircle : icons.Send" [size]="16" [class.animate-spin]="submitting()" />

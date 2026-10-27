@@ -24,11 +24,11 @@ import { AuthLayoutComponent } from './auth-layout.component';
     <app-auth-layout>
       <div @fadeInUp>
         @if (auth.mustChangePassword()) {
-          <span class="inline-flex items-center gap-2 rounded-full bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-500/25 dark:text-amber-300">
+          <span class="badge bg-amber-50 text-amber-800 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/25">
             <lucide-icon [img]="icons.LockKeyhole" [size]="13" /> Temporary password detected
           </span>
         }
-        <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">{{ auth.mustChangePassword() ? 'Set your own password' : 'Change password' }}</h1>
+        <h1 class="mt-3 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">{{ auth.mustChangePassword() ? 'Set your own password' : 'Change password' }}</h1>
         <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
           @if (auth.mustChangePassword()) {
             Hi {{ auth.firstName() }} — for your security, replace the temporary password before using HCM Lite.
@@ -37,7 +37,7 @@ import { AuthLayoutComponent } from './auth-layout.component';
           }
         </p>
 
-        <form [formGroup]="form" (ngSubmit)="submit()" class="card mt-7 space-y-4 p-6 sm:p-7">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="card mt-6 space-y-4 p-6">
           <div>
             <label class="label" for="current">{{ auth.mustChangePassword() ? 'Temporary password' : 'Current password' }}</label>
             <input id="current" [type]="show() ? 'text' : 'password'" class="input" formControlName="currentPassword" autocomplete="current-password" />
@@ -62,7 +62,7 @@ import { AuthLayoutComponent } from './auth-layout.component';
           </div>
 
           @if (error()) {
-            <p class="flex items-start gap-2 rounded-2xl bg-rose-50 p-3.5 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
+            <p class="flex items-start gap-2 rounded-lg bg-rose-50 p-3.5 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
               <lucide-icon [img]="icons.CircleAlert" [size]="17" class="mt-0.5 shrink-0" /> {{ error() }}
             </p>
           }

@@ -14,7 +14,7 @@ export class ThemeService {
     effect(() => {
       const dark = this.isDark();
       this.document.documentElement.classList.toggle('dark', dark);
-      this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#020617' : '#0F172A');
+      this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0B0C0F' : '#F7F7F8');
     });
   }
 
@@ -23,9 +23,8 @@ export class ThemeService {
     safeStorage.set(THEME_KEY, this.isDark() ? 'dark' : 'light');
   }
 
+  /** Light by default; dark only when the user picked it (matches the pre-paint script in index.html). */
   private initial(): boolean {
-    const saved = safeStorage.get(THEME_KEY);
-    if (saved) return saved === 'dark';
-    return typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    return safeStorage.get(THEME_KEY) === 'dark';
   }
 }

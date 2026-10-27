@@ -38,7 +38,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
     >
       <div header-actions class="flex items-center gap-2">
         <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white shadow-sm dark:bg-slate-800 dark:ring-1 dark:ring-white/10">
-          <lucide-icon [img]="icons.ShieldCheck" [size]="14" class="text-emerald-400" /> Immutable Trail
+          <lucide-icon [img]="icons.ShieldCheck" [size]="14" class="text-blue-400" /> Immutable Trail
         </span>
         <button type="button" class="btn btn-ghost btn-sm" (click)="loadLogs()" [disabled]="loading()">
           <lucide-icon [img]="icons.RefreshCw" [size]="14" [class.animate-spin]="loading()" /> Refresh
@@ -52,7 +52,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
         <div class="flex flex-wrap items-center gap-3">
           <!-- Action Filter -->
           <div class="flex items-center gap-2">
-            <label for="audit-action" class="text-xs font-semibold uppercase tracking-wider text-slate-500">Action:</label>
+            <label for="audit-action" class="text-xs font-medium text-slate-500">Action:</label>
             <select
               id="audit-action"
               class="input input-sm max-w-[170px]"
@@ -68,7 +68,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
 
           <!-- Entity Filter -->
           <div class="flex items-center gap-2">
-            <label for="audit-entity" class="text-xs font-semibold uppercase tracking-wider text-slate-500">Entity:</label>
+            <label for="audit-entity" class="text-xs font-medium text-slate-500">Entity:</label>
             <select
               id="audit-entity"
               class="input input-sm max-w-[170px]"
@@ -93,7 +93,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
 
           <!-- Date Range -->
           <div class="flex items-center gap-2">
-            <label for="audit-from" class="text-xs font-semibold uppercase tracking-wider text-slate-500">From:</label>
+            <label for="audit-from" class="text-xs font-medium text-slate-500">From:</label>
             <input
               id="audit-from"
               type="date"
@@ -104,7 +104,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
           </div>
 
           <div class="flex items-center gap-2">
-            <label for="audit-to" class="text-xs font-semibold uppercase tracking-wider text-slate-500">To:</label>
+            <label for="audit-to" class="text-xs font-medium text-slate-500">To:</label>
             <input
               id="audit-to"
               type="date"
@@ -126,13 +126,12 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
       @if (loading()) {
         <div class="space-y-3">
           @for (i of [1, 2, 3, 4, 5]; track i) {
-            <div class="skeleton h-14 rounded-2xl"></div>
+            <div class="skeleton h-14 rounded-lg"></div>
           }
         </div>
       } @else if (logs().length === 0) {
         <app-empty-state
           art="shield"
-          tone="slate"
           title="No audit entries found"
           description="No security or system events match the selected filters."
         />
@@ -154,7 +153,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
               <tbody>
                 @for (log of logs(); track log.id) {
                   <tr>
-                    <td class="font-mono text-xs whitespace-nowrap">
+                    <td class="num text-xs whitespace-nowrap">
                       <div>{{ log.createdAt | stamp }}</div>
                       <span class="text-slate-400 text-[11px]">{{ log.createdAt | ago }}</span>
                     </td>
@@ -168,8 +167,8 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
                       </div>
                     </td>
                     <td>
-                      <span class="badge" [class]="actionClass(log.action)">
-                        <lucide-icon [img]="actionIcon(log.action)" [size]="12" />
+                      <span class="badge bg-white text-slate-700 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">
+                        <lucide-icon [img]="actionIcon(log.action)" [size]="12" class="text-slate-400" />
                         {{ log.action | title }}
                       </span>
                     </td>
@@ -194,7 +193,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
                     </td>
                     <td>
                       @if (hasDiff(log)) {
-                        <span class="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                        <span class="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 font-medium">
                           <lucide-icon [img]="icons.GitCompareArrows" [size]="13" /> Before &amp; After
                         </span>
                       } @else {
@@ -230,7 +229,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
       @if (selectedLog(); as log) {
         <div class="p-6 space-y-6">
           <!-- Metadata Card -->
-          <div class="rounded-2xl border border-slate-200/80 bg-slate-50 p-4 text-xs dark:border-slate-800 dark:bg-slate-800/50 space-y-2">
+          <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs dark:border-slate-800 dark:bg-slate-800/50 space-y-2">
             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div>
                 <span class="text-slate-400">Actor:</span>
@@ -254,7 +253,7 @@ import { PaginationComponent } from '../../shared/ui/pagination.component';
           <!-- JSON Diff Viewer Component -->
           <div>
             <h4 class="eyebrow mb-3">State Changes (Before &rarr; After)</h4>
-            <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+            <div class="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
               <app-json-diff [before]="log.before" [after]="log.after" />
             </div>
           </div>
@@ -336,30 +335,6 @@ export class AuditLogsComponent implements OnInit {
   protected asRole(roleStr: string): 'Admin' | 'HR' | 'Employee' {
     if (roleStr === 'Admin' || roleStr === 'HR' || roleStr === 'Employee') return roleStr;
     return 'Admin';
-  }
-
-  protected actionClass(action: AuditAction): string {
-    switch (action) {
-      case 'create':
-      case 'approve':
-      case 'activate':
-      case 'initialize':
-        return 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300';
-      case 'finalize':
-        return 'bg-violet-50 text-violet-700 ring-violet-600/20 dark:bg-violet-500/10 dark:text-violet-300';
-      case 'update':
-      case 'import':
-      case 'change_password':
-        return 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300';
-      case 'reset_password':
-        return 'bg-amber-50 text-amber-800 ring-amber-600/25 dark:bg-amber-500/10 dark:text-amber-300';
-      case 'delete':
-      case 'reject':
-      case 'deactivate':
-        return 'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300';
-      default:
-        return 'bg-slate-100 text-slate-700 ring-slate-400/25 dark:bg-slate-800 dark:text-slate-300';
-    }
   }
 
   protected actionIcon(action: AuditAction) {

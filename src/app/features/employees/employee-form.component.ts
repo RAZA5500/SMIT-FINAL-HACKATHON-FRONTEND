@@ -30,7 +30,7 @@ import { ModalComponent } from '../../shared/ui/modal.component';
       (closed)="closed.emit()"
     >
       @if (activeDepartments().length === 0 || activeDesignations().length === 0) {
-        <div class="mb-4 flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+        <div class="mb-4 flex gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
           <lucide-icon [img]="icons.TriangleAlert" [size]="18" class="mt-0.5 shrink-0" />
           <div>
             <p class="font-semibold">Departments and designations are needed first</p>
@@ -133,37 +133,37 @@ import { ModalComponent } from '../../shared/ui/modal.component';
           }
         </section>
 
-        <section class="rounded-2xl border border-emerald-200/70 bg-gradient-to-br from-emerald-50 to-teal-50/50 p-4 dark:border-emerald-500/20 dark:from-emerald-500/5 dark:to-teal-500/5">
+        <section class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
           <div class="grid gap-4 sm:grid-cols-[220px_1fr] sm:items-end">
             <div>
               <label class="label" for="ebs">Basic salary (monthly)</label>
-              <input id="ebs" type="number" min="1" step="1" class="input font-mono" formControlName="basicSalary" placeholder="100000" />
+              <input id="ebs" type="number" min="1" step="1" class="input num" formControlName="basicSalary" placeholder="100000" />
               <app-field-error [control]="form.controls.basicSalary" label="Basic salary" [show]="attempted()" />
             </div>
             <dl class="grid grid-cols-3 gap-2 text-center">
-              <div class="rounded-xl bg-white/80 px-2 py-2.5 dark:bg-slate-900/60">
-                <dt class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">HRA {{ hraPct() }}</dt>
-                <dd class="num mt-0.5 text-sm font-bold text-slate-800 dark:text-slate-100">{{ salary().hra | money }}</dd>
+              <div class="rounded-lg bg-white/80 px-2 py-2.5 dark:bg-slate-900/60">
+                <dt class="text-xs font-medium text-slate-400">HRA {{ hraPct() }}</dt>
+                <dd class="num mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-100">{{ salary().hra | money }}</dd>
               </div>
-              <div class="rounded-xl bg-white/80 px-2 py-2.5 dark:bg-slate-900/60">
-                <dt class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Medical {{ medicalPct() }}</dt>
-                <dd class="num mt-0.5 text-sm font-bold text-slate-800 dark:text-slate-100">{{ salary().medical | money }}</dd>
+              <div class="rounded-lg bg-white/80 px-2 py-2.5 dark:bg-slate-900/60">
+                <dt class="text-xs font-medium text-slate-400">Medical {{ medicalPct() }}</dt>
+                <dd class="num mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-100">{{ salary().medical | money }}</dd>
               </div>
-              <div class="rounded-xl bg-emerald-500 px-2 py-2.5 text-white shadow-md shadow-emerald-500/25">
-                <dt class="text-[10px] font-semibold uppercase tracking-wider text-emerald-100">Gross</dt>
-                <dd class="num mt-0.5 text-sm font-bold">{{ salary().gross | money }}</dd>
+              <div class="rounded-lg bg-blue-500 px-2 py-2.5 text-white shadow-xs">
+                <dt class="text-xs font-medium text-blue-100">Gross</dt>
+                <dd class="num mt-0.5 text-sm font-semibold">{{ salary().gross | money }}</dd>
               </div>
             </dl>
           </div>
         </section>
 
         @if (serverError()) {
-          <p class="flex gap-2 rounded-2xl bg-rose-50 p-3.5 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
+          <p class="flex gap-2 rounded-lg bg-rose-50 p-3.5 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
             <lucide-icon [img]="icons.CircleAlert" [size]="17" class="mt-0.5 shrink-0" /> {{ serverError() }}
           </p>
         }
       </form>
-      <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-secondary" (click)="closed.emit()">Cancel</button>
         <button type="submit" form="employee-form" class="btn btn-primary" [disabled]="saving()">
           <lucide-icon [img]="saving() ? icons.LoaderCircle : icons.Check" [size]="16" [class.animate-spin]="saving()" />

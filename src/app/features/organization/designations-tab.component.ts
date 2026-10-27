@@ -29,7 +29,7 @@ import { ModalComponent } from '../../shared/ui/modal.component';
     @if (loading()) {
       <div class="skeleton h-64"></div>
     } @else if (items().length === 0) {
-      <app-empty-state art="org" tone="teal" title="No designations created yet" [description]="canEdit() ? 'Add job titles such as Software Engineer, Accountant or Team Lead.' : 'Your Admin has not created designations yet.'">
+      <app-empty-state art="org" title="No designations created yet" [description]="canEdit() ? 'Add job titles such as Software Engineer, Accountant or Team Lead.' : 'Your Admin has not created designations yet.'">
         @if (canEdit()) {
           <button type="button" class="btn btn-primary" (click)="openCreate()"><lucide-icon [img]="icons.Plus" [size]="16" /> Create first designation</button>
         }
@@ -54,7 +54,7 @@ import { ModalComponent } from '../../shared/ui/modal.component';
                 <tr>
                   <td>
                     <div class="flex items-center gap-3">
-                      <span class="grid h-9 w-9 place-items-center rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400"><lucide-icon [img]="icons.Award" [size]="16" /></span>
+                      <span class="grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700"><lucide-icon [img]="icons.Award" [size]="16" /></span>
                       <span class="font-semibold text-slate-900 dark:text-white">{{ d.name }}</span>
                     </div>
                   </td>
@@ -86,12 +86,12 @@ import { ModalComponent } from '../../shared/ui/modal.component';
           <label class="label" for="gd">Description</label>
           <textarea id="gd" rows="3" class="input resize-none" formControlName="description"></textarea>
         </div>
-        <label class="flex items-center justify-between rounded-2xl border border-slate-200 p-3.5 dark:border-slate-800">
+        <label class="flex items-center justify-between rounded-lg border border-slate-200 p-3.5 dark:border-slate-800">
           <span class="text-sm font-medium">Active</span>
           <input type="checkbox" class="switch" formControlName="isActive" />
         </label>
       </form>
-      <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-secondary" (click)="modalOpen.set(false)">Cancel</button>
         <button type="submit" form="desig-form" class="btn btn-primary" [disabled]="saving()">
           <lucide-icon [img]="saving() ? icons.LoaderCircle : icons.Check" [size]="16" [class.animate-spin]="saving()" /> {{ editing() ? 'Save changes' : 'Create designation' }}

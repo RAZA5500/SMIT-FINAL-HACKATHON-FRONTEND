@@ -127,16 +127,16 @@ export class Employee360Component {
     const s = this.salary();
     if (!s || !s.gross) return [];
     return [
-      { label: 'Basic', value: s.basic, cls: 'bg-teal-600' },
-      { label: 'HRA', value: s.hra, cls: 'bg-teal-400' },
-      { label: 'Medical', value: s.medical, cls: 'bg-emerald-300' },
+      { label: 'Basic', value: s.basic, cls: 'bg-indigo-600' },
+      { label: 'HRA', value: s.hra, cls: 'bg-indigo-400' },
+      { label: 'Medical', value: s.medical, cls: 'bg-blue-300' },
     ].map((seg) => ({ ...seg, pct: (seg.value / s.gross) * 100 }));
   });
   protected readonly monthStats = computed(() => {
     const m = this.profile()?.attendance.currentMonth;
     if (!m) return [];
     return [
-      { label: 'Attendance rate', value: formatPercent(m.attendanceRate), tone: 'text-emerald-600 dark:text-emerald-400' },
+      { label: 'Attendance rate', value: formatPercent(m.attendanceRate), tone: 'text-blue-600 dark:text-blue-400' },
       { label: 'Present', value: String(m.counts.present), tone: 'text-slate-900 dark:text-white' },
       { label: 'Late', value: String(m.counts.late), tone: 'text-blue-600 dark:text-blue-400' },
       { label: 'Absent', value: String(m.counts.absent), tone: 'text-rose-600 dark:text-rose-400' },

@@ -1,39 +1,41 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { LucideAngularModule, LucideIconData } from 'lucide-angular';
 import { Role } from '../../core/models/api.models';
-import { avatarGradient, initials } from '../../core/utils/format';
+import { initials } from '../../core/utils/format';
 import { Icons } from './icons';
 
 interface BadgeStyle {
   label: string;
-  classes: string;
-  icon: LucideIconData;
+  /** Dot colour; colour never carries meaning alone (the label is always shown). */
+  dot: string;
+  /** Replaces the dot where a shape says more (the payroll "Locked" badge). */
+  icon?: LucideIconData;
 }
 
-/** Colour system from the brief: emerald = present/approved, blue = late, amber = leave/pending, rose = absent/rejected, navy = locked. */
+/** Status colours: green = present/approved (the only green left in the UI), blue = late, amber = leave/pending, rose = absent/rejected. */
 const STATUS_STYLES: Record<string, BadgeStyle> = {
-  present: { label: 'Present', classes: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/25', icon: Icons.CircleCheck },
-  late: { label: 'Late', classes: 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-400/25', icon: Icons.Clock },
-  half_day: { label: 'Half day', classes: 'bg-orange-50 text-orange-700 ring-orange-600/20 dark:bg-orange-500/10 dark:text-orange-300 dark:ring-orange-400/25', icon: Icons.Timer },
-  missing_checkout: { label: 'Missing check-out', classes: 'bg-slate-100 text-slate-700 ring-slate-500/25 dark:bg-slate-500/15 dark:text-slate-300 dark:ring-slate-400/25', icon: Icons.CircleAlert },
-  absent: { label: 'Absent', classes: 'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-400/25', icon: Icons.CircleX },
-  on_leave: { label: 'On leave', classes: 'bg-amber-50 text-amber-800 ring-amber-600/25 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/25', icon: Icons.TreePalm },
-  not_checked_in: { label: 'Not checked in', classes: 'bg-slate-50 text-slate-500 ring-slate-400/25 dark:bg-slate-800/60 dark:text-slate-400 dark:ring-slate-600/40', icon: Icons.CircleDashed },
-  weekend: { label: 'Weekend', classes: 'bg-slate-50 text-slate-500 ring-slate-300/50 dark:bg-slate-800/60 dark:text-slate-400 dark:ring-slate-600/40', icon: Icons.CalendarDays },
-  holiday: { label: 'Holiday', classes: 'bg-teal-50 text-teal-700 ring-teal-600/20 dark:bg-teal-500/10 dark:text-teal-300 dark:ring-teal-400/25', icon: Icons.PartyPopper },
-  pending: { label: 'Pending', classes: 'bg-amber-50 text-amber-800 ring-amber-600/25 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/25', icon: Icons.Hourglass },
-  approved: { label: 'Approved', classes: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/25', icon: Icons.CircleCheck },
-  rejected: { label: 'Rejected', classes: 'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-400/25', icon: Icons.CircleX },
-  cancelled: { label: 'Cancelled', classes: 'bg-slate-100 text-slate-600 ring-slate-400/30 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-600/40', icon: Icons.Ban },
-  draft: { label: 'Draft', classes: 'bg-amber-50 text-amber-800 ring-amber-600/25 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/25', icon: Icons.Pencil },
-  finalized: { label: 'Locked', classes: 'bg-slate-900 text-white ring-slate-900 dark:bg-white dark:text-slate-900 dark:ring-white', icon: Icons.Lock },
-  active: { label: 'Active', classes: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/25', icon: Icons.CircleCheck },
-  probation: { label: 'Probation', classes: 'bg-amber-50 text-amber-800 ring-amber-600/25 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/25', icon: Icons.Hourglass },
-  exited: { label: 'Exited', classes: 'bg-slate-100 text-slate-600 ring-slate-400/30 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-600/40', icon: Icons.UserX },
-  inactive: { label: 'Inactive', classes: 'bg-slate-100 text-slate-600 ring-slate-400/30 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-600/40', icon: Icons.Ban },
-  high: { label: 'High risk', classes: 'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-400/25', icon: Icons.TriangleAlert },
-  medium: { label: 'Medium risk', classes: 'bg-amber-50 text-amber-800 ring-amber-600/25 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/25', icon: Icons.CircleAlert },
-  low: { label: 'Low risk', classes: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/25', icon: Icons.ShieldCheck },
+  present: { label: 'Present', dot: 'bg-green-500' },
+  late: { label: 'Late', dot: 'bg-blue-500' },
+  half_day: { label: 'Half day', dot: 'bg-orange-500' },
+  missing_checkout: { label: 'Missing check-out', dot: 'bg-slate-400' },
+  absent: { label: 'Absent', dot: 'bg-rose-500' },
+  on_leave: { label: 'On leave', dot: 'bg-amber-500' },
+  not_checked_in: { label: 'Not checked in', dot: 'bg-slate-300 dark:bg-slate-600' },
+  weekend: { label: 'Weekend', dot: 'bg-slate-300 dark:bg-slate-600' },
+  holiday: { label: 'Holiday', dot: 'bg-indigo-500' },
+  pending: { label: 'Pending', dot: 'bg-amber-500' },
+  approved: { label: 'Approved', dot: 'bg-green-500' },
+  rejected: { label: 'Rejected', dot: 'bg-rose-500' },
+  cancelled: { label: 'Cancelled', dot: 'bg-slate-400' },
+  draft: { label: 'Draft', dot: 'bg-amber-500' },
+  finalized: { label: 'Locked', dot: '', icon: Icons.Lock },
+  active: { label: 'Active', dot: 'bg-green-500' },
+  probation: { label: 'Probation', dot: 'bg-amber-500' },
+  exited: { label: 'Exited', dot: 'bg-slate-400' },
+  inactive: { label: 'Inactive', dot: 'bg-slate-400' },
+  high: { label: 'High risk', dot: 'bg-rose-500' },
+  medium: { label: 'Medium risk', dot: 'bg-amber-500' },
+  low: { label: 'Low risk', dot: 'bg-green-500' },
 };
 
 export function statusLabel(status: string | null | undefined): string {
@@ -41,14 +43,20 @@ export function statusLabel(status: string | null | undefined): string {
   return STATUS_STYLES[status]?.label ?? status.replace(/_/g, ' ');
 }
 
-/** Status pill with icon + label — colour never carries meaning alone. */
+const BADGE_SURFACE = 'bg-white text-slate-700 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700';
+
+/** Status label with a small colour dot. */
 @Component({
   selector: 'app-status-badge',
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <span class="badge" [class]="style().classes" [class.text-xs]="size() === 'md'" [class.px-3]="size() === 'md'" [class.py-1]="size() === 'md'">
-      <lucide-icon [img]="style().icon" [size]="size() === 'md' ? 14 : 12" [strokeWidth]="2.4" />
+    <span class="badge" [class]="classes()">
+      @if (style().icon; as icon) {
+        <lucide-icon [img]="icon" [size]="12" [strokeWidth]="2.4" />
+      } @else {
+        <span class="h-1.5 w-1.5 shrink-0 rounded-full" [class]="style().dot"></span>
+      }
       {{ label() || style().label }}
     </span>
   `,
@@ -58,32 +66,31 @@ export class StatusBadgeComponent {
   readonly label = input<string>('');
   readonly size = input<'sm' | 'md'>('sm');
 
-  protected readonly style = computed<BadgeStyle>(
-    () => STATUS_STYLES[this.status()] ?? { label: statusLabel(this.status()), classes: STATUS_STYLES['inactive'].classes, icon: Icons.Info },
-  );
+  protected readonly classes = computed(() => (this.size() === 'md' ? `${BADGE_SURFACE} px-2.5 py-1 text-[13px]` : BADGE_SURFACE));
+  protected readonly style = computed<BadgeStyle>(() => STATUS_STYLES[this.status()] ?? { label: statusLabel(this.status()), dot: 'bg-slate-400' });
 }
 
-const ROLE_STYLES: Record<Role, { classes: string; icon: LucideIconData }> = {
-  Admin: { classes: 'bg-slate-900 text-white ring-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:ring-slate-100', icon: Icons.ShieldCheck },
-  HR: { classes: 'bg-emerald-500 text-white ring-emerald-500 dark:bg-emerald-500/20 dark:text-emerald-300 dark:ring-emerald-400/40', icon: Icons.Users },
-  Employee: { classes: 'bg-amber-400 text-slate-950 ring-amber-400 dark:bg-amber-400/20 dark:text-amber-300 dark:ring-amber-400/40', icon: Icons.UserRound },
+/** Admin = ink, HR = blue, Employee = amber (role dots). */
+const ROLE_DOTS: Record<Role, string> = {
+  Admin: 'bg-slate-900 dark:bg-white',
+  HR: 'bg-blue-500',
+  Employee: 'bg-amber-500',
 };
 
-/** Admin = navy, HR = emerald, Employee = amber. */
 @Component({
   selector: 'app-role-badge',
-  imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <span class="badge" [class]="style().classes">
-      <lucide-icon [img]="style().icon" [size]="11" [strokeWidth]="2.6" />
+    <span class="badge" [class]="surface">
+      <span class="h-1.5 w-1.5 shrink-0 rounded-full" [class]="dot()"></span>
       {{ role() }}
     </span>
   `,
 })
 export class RoleBadgeComponent {
   readonly role = input.required<Role>();
-  protected readonly style = computed(() => ROLE_STYLES[this.role()] ?? ROLE_STYLES.Employee);
+  protected readonly surface = BADGE_SURFACE;
+  protected readonly dot = computed(() => ROLE_DOTS[this.role()] ?? ROLE_DOTS.Employee);
 }
 
 /** The violet "AI-generated" tag carried by every AI output. */
@@ -92,11 +99,8 @@ export class RoleBadgeComponent {
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <span
-      class="badge bg-gradient-to-r from-violet-600 to-purple-500 text-white ring-violet-500/40 shadow-sm shadow-violet-500/30"
-      [title]="title()"
-    >
-      <lucide-icon [img]="icons.Sparkles" [size]="11" [strokeWidth]="2.6" />
+    <span class="badge bg-violet-50 text-violet-700 ring-violet-200 dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-500/25" [title]="title()">
+      <lucide-icon [img]="icons.Sparkles" [size]="11" [strokeWidth]="2.4" />
       {{ text() }}
     </span>
   `,
@@ -107,14 +111,26 @@ export class AiBadgeComponent {
   protected readonly icons = Icons;
 }
 
-/** Initials avatar with a stable per-name gradient. */
+/** Gradient pairs for initials avatars; a person always gets the same one. */
+const AVATAR_GRADIENTS = [
+  'from-blue-400 to-indigo-600',
+  'from-violet-400 to-purple-600',
+  'from-amber-300 to-orange-500',
+  'from-sky-400 to-blue-600',
+  'from-rose-400 to-pink-600',
+  'from-indigo-300 to-cyan-600',
+  'from-indigo-400 to-violet-600',
+  'from-lime-400 to-blue-600',
+];
+
+/** Initials avatar on a name-seeded gradient. */
 @Component({
   selector: 'app-avatar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <span
-      class="inline-flex shrink-0 select-none items-center justify-center rounded-2xl bg-gradient-to-br font-bold text-white shadow-sm ring-2 ring-white dark:ring-slate-900"
-      [class]="gradient() + ' ' + sizeClass()"
+      class="inline-flex shrink-0 select-none items-center justify-center rounded-full bg-gradient-to-br font-semibold text-white shadow-xs"
+      [class]="sizeClass() + ' ' + gradient()"
       [attr.aria-label]="name()"
       >{{ letters() }}</span
     >
@@ -125,15 +141,20 @@ export class AvatarComponent {
   readonly size = input<'xs' | 'sm' | 'md' | 'lg' | 'xl'>('md');
 
   protected readonly letters = computed(() => initials(this.name()));
-  protected readonly gradient = computed(() => avatarGradient(this.name()));
+  protected readonly gradient = computed(() => {
+    const name = this.name() ?? '';
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) | 0;
+    return AVATAR_GRADIENTS[Math.abs(hash) % AVATAR_GRADIENTS.length];
+  });
   protected readonly sizeClass = computed(
     () =>
       ({
-        xs: 'h-7 w-7 rounded-lg text-[10px]',
-        sm: 'h-9 w-9 rounded-xl text-xs',
-        md: 'h-11 w-11 text-sm',
-        lg: 'h-14 w-14 text-lg',
-        xl: 'h-20 w-20 rounded-3xl text-2xl',
+        xs: 'h-6 w-6 text-[10px]',
+        sm: 'h-8 w-8 text-xs',
+        md: 'h-10 w-10 text-sm',
+        lg: 'h-12 w-12 text-base',
+        xl: 'h-16 w-16 text-xl',
       })[this.size()],
   );
 }

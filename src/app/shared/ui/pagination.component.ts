@@ -30,8 +30,8 @@ import { Icons } from './icons';
                 } @else {
                   <button
                     type="button"
-                    class="h-9 min-w-9 rounded-xl px-2 text-sm font-semibold transition"
-                    [class]="p === m.page ? 'bg-slate-900 text-white shadow-md dark:bg-white dark:text-slate-900' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'"
+                    class="h-9 min-w-9 rounded-lg px-2 text-sm font-semibold transition"
+                    [class]="p === m.page ? 'bg-slate-900 text-white shadow-xs dark:bg-white dark:text-slate-900' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'"
                     (click)="pageChange.emit(p)"
                     [attr.aria-current]="p === m.page ? 'page' : null"
                   >

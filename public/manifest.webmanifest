@@ -1,6 +1,9 @@
 {
-  "name": "hcm-lite-frontend",
-  "short_name": "hcm-lite-frontend",
+  "name": "HCM Lite — AI-assisted HR",
+  "short_name": "HCM Lite",
+  "description": "Attendance, leave, payroll and an AI assistant for Admin, HR and employees.",
+  "theme_color": "#F7F7F8",
+  "background_color": "#F7F7F8",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

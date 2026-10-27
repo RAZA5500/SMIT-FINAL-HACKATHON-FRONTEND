@@ -27,7 +27,7 @@ const MAX_BYTES = 2 * 1024 * 1024;
       <ol class="mb-6 flex items-center gap-2 text-xs font-semibold">
         @for (s of steps; track s.id; let i = $index) {
           <li class="flex flex-1 items-center gap-2">
-            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors" [class]="stepIndex() > i ? 'bg-emerald-500 text-white' : stepIndex() === i ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'">
+            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors" [class]="stepIndex() > i ? 'bg-blue-500 text-white' : stepIndex() === i ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'">
               @if (stepIndex() > i) {
                 <lucide-icon [img]="icons.Check" [size]="14" [strokeWidth]="3" />
               } @else {
@@ -36,7 +36,7 @@ const MAX_BYTES = 2 * 1024 * 1024;
             </span>
             <span class="hidden sm:inline" [class]="stepIndex() >= i ? 'text-slate-900 dark:text-white' : 'text-slate-400'">{{ s.label }}</span>
             @if (i < steps.length - 1) {
-              <span class="h-px flex-1 transition-colors" [class]="stepIndex() > i ? 'bg-emerald-400' : 'bg-slate-200 dark:bg-slate-700'"></span>
+              <span class="h-px flex-1 transition-colors" [class]="stepIndex() > i ? 'bg-blue-400' : 'bg-slate-200 dark:bg-slate-700'"></span>
             }
           </li>
         }
@@ -46,15 +46,15 @@ const MAX_BYTES = 2 * 1024 * 1024;
         @case ('upload') {
           <div @fadeInUp>
             <label
-              class="group relative flex cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed px-6 py-12 text-center transition-all duration-300"
-              [class]="dragging() ? 'scale-[1.01] border-emerald-400 bg-emerald-50 dark:bg-emerald-500/10' : file() ? 'border-emerald-300 bg-emerald-50/50 dark:border-emerald-500/40 dark:bg-emerald-500/5' : 'border-slate-300 bg-slate-50/60 hover:border-emerald-300 hover:bg-emerald-50/40 dark:border-slate-700 dark:bg-slate-900/40'"
+              class="group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-12 text-center transition-all duration-300"
+              [class]="dragging() ? 'border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-500/10' : file() ? 'border-slate-400 bg-white dark:border-slate-600 dark:bg-slate-900' : 'border-slate-300 bg-slate-50 hover:border-slate-400 dark:border-slate-700 dark:bg-slate-900/40 dark:hover:border-slate-600'"
               (dragover)="onDragOver($event)"
               (dragleave)="dragging.set(false)"
               (drop)="onDrop($event)"
             >
               <input type="file" accept=".csv,text/csv" class="sr-only" (change)="onPick($event)" />
-              <span class="grid h-16 w-16 place-items-center rounded-3xl bg-gradient-to-br from-emerald-400 to-teal-600 text-white shadow-lg shadow-emerald-500/30 transition-transform duration-300 group-hover:-translate-y-1">
-                <lucide-icon [img]="file() ? icons.FileSpreadsheet : icons.CloudUpload" [size]="28" />
+              <span class="grid h-12 w-12 place-items-center rounded-lg bg-white text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">
+                <lucide-icon [img]="file() ? icons.FileSpreadsheet : icons.CloudUpload" [size]="22" />
               </span>
               @if (file(); as f) {
                 <p class="mt-4 font-semibold text-slate-900 dark:text-white">{{ f.name }}</p>
@@ -67,7 +67,7 @@ const MAX_BYTES = 2 * 1024 * 1024;
             @if (fileError()) {
               <p class="field-error mt-3">{{ fileError() }}</p>
             }
-            <div class="mt-5 grid gap-4 rounded-2xl border border-slate-200 p-4 text-sm dark:border-slate-800 md:grid-cols-[1fr_auto] md:items-center">
+            <div class="mt-5 grid gap-4 rounded-lg border border-slate-200 p-4 text-sm dark:border-slate-800 md:grid-cols-[1fr_auto] md:items-center">
               <div>
                 <p class="font-semibold text-slate-800 dark:text-slate-100">Columns</p>
                 <p class="mt-1 font-mono text-xs leading-relaxed text-slate-500 dark:text-slate-400">code*, fullName*, email*, phone, address, gender, department*, designation*, joinDate* (YYYY-MM-DD), status, exitDate, basicSalary*</p>
@@ -82,7 +82,7 @@ const MAX_BYTES = 2 * 1024 * 1024;
           <div @fadeInUp>
             @if (busy() && !result()) {
               <div class="flex flex-col items-center py-12 text-center">
-                <lucide-icon [img]="icons.LoaderCircle" [size]="36" class="animate-spin text-emerald-500" />
+                <lucide-icon [img]="icons.LoaderCircle" [size]="36" class="animate-spin text-slate-400" />
                 <p class="mt-3 font-semibold text-slate-800 dark:text-slate-100">Validating every row…</p>
                 <p class="text-sm text-slate-500">Required fields, duplicates, emails, departments, dates and salaries.</p>
               </div>
@@ -90,27 +90,27 @@ const MAX_BYTES = 2 * 1024 * 1024;
               @let r = result()!;
               <!-- Validation scorecard -->
               <div class="grid gap-3 sm:grid-cols-3" [@listStagger]="3">
-                <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-                  <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Rows checked</p>
-                  <p class="mt-1 text-3xl font-extrabold text-slate-900 dark:text-white">{{ r.totalRows }}</p>
+                <div class="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+                  <p class="text-xs font-medium text-slate-400">Rows checked</p>
+                  <p class="num mt-1 text-2xl font-semibold text-slate-900 dark:text-white">{{ r.totalRows }}</p>
                 </div>
-                <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-500/30 dark:bg-emerald-500/10">
-                  <p class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300"><lucide-icon [img]="icons.CircleCheck" [size]="13" /> Valid rows</p>
-                  <p class="mt-1 text-3xl font-extrabold text-emerald-700 dark:text-emerald-300">{{ r.validRows }}</p>
+                <div class="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-500/30 dark:bg-blue-500/10">
+                  <p class="flex items-center gap-1.5 text-xs font-medium text-blue-700 dark:text-blue-300"><lucide-icon [img]="icons.CircleCheck" [size]="13" /> Valid rows</p>
+                  <p class="num mt-1 text-2xl font-semibold text-blue-700 dark:text-blue-300">{{ r.validRows }}</p>
                 </div>
-                <div class="rounded-2xl border p-4" [class]="r.invalidRows ? 'border-rose-200 bg-rose-50 dark:border-rose-500/30 dark:bg-rose-500/10' : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'">
-                  <p class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider" [class]="r.invalidRows ? 'text-rose-700 dark:text-rose-300' : 'text-slate-400'"><lucide-icon [img]="icons.CircleX" [size]="13" /> Invalid rows</p>
-                  <p class="mt-1 text-3xl font-extrabold" [class]="r.invalidRows ? 'text-rose-700 dark:text-rose-300' : 'text-slate-900 dark:text-white'">{{ r.invalidRows }}</p>
+                <div class="rounded-lg border p-4" [class]="r.invalidRows ? 'border-rose-200 bg-rose-50 dark:border-rose-500/30 dark:bg-rose-500/10' : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'">
+                  <p class="flex items-center gap-1.5 text-xs font-medium" [class]="r.invalidRows ? 'text-rose-700 dark:text-rose-300' : 'text-slate-400'"><lucide-icon [img]="icons.CircleX" [size]="13" /> Invalid rows</p>
+                  <p class="num mt-1 text-2xl font-semibold" [class]="r.invalidRows ? 'text-rose-700 dark:text-rose-300' : 'text-slate-900 dark:text-white'">{{ r.invalidRows }}</p>
                 </div>
               </div>
 
               @if (r.valid) {
-                <div class="mt-5 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 p-4 text-white shadow-glow-emerald">
-                  <lucide-icon [img]="icons.ShieldCheck" [size]="22" />
-                  <p class="text-sm font-semibold">All {{ r.totalRows }} rows passed the dry run. Commit to create {{ r.totalRows }} employees and their logins.</p>
+                <div class="mt-5 flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-900 dark:border-blue-500/25 dark:bg-blue-500/10 dark:text-blue-200">
+                  <lucide-icon [img]="icons.ShieldCheck" [size]="20" class="shrink-0 text-blue-600 dark:text-blue-400" />
+                  <p class="text-sm font-medium">All {{ r.totalRows }} rows passed the dry run. Commit to create {{ r.totalRows }} employees and their logins.</p>
                 </div>
               } @else {
-                <div class="mt-5 overflow-hidden rounded-2xl border border-rose-200 dark:border-rose-500/30">
+                <div class="mt-5 overflow-hidden rounded-lg border border-rose-200 dark:border-rose-500/30">
                   <div class="flex items-center justify-between bg-rose-50 px-4 py-2.5 dark:bg-rose-500/10">
                     <p class="text-sm font-semibold text-rose-800 dark:text-rose-200">{{ r.errors.length }} problem{{ r.errors.length === 1 ? '' : 's' }} to fix</p>
                     <button type="button" class="btn btn-ghost btn-sm text-rose-700 dark:text-rose-300" (click)="downloadErrors(r)"><lucide-icon [img]="icons.Download" [size]="13" /> Error report</button>
@@ -127,7 +127,7 @@ const MAX_BYTES = 2 * 1024 * 1024;
                       <tbody>
                         @for (e of r.errors; track $index) {
                           <tr>
-                            <td class="num font-mono font-bold text-rose-700 dark:text-rose-300">{{ e.row }}</td>
+                            <td class="num font-mono font-semibold text-rose-700 dark:text-rose-300">{{ e.row }}</td>
                             <td><span class="badge bg-rose-50 font-mono text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300">{{ e.field }}</span></td>
                             <td class="text-slate-700 dark:text-slate-200">{{ e.reason }}</td>
                           </tr>
@@ -145,13 +145,13 @@ const MAX_BYTES = 2 * 1024 * 1024;
         @case ('done') {
           @if (result(); as r) {
             <div @fadeInUp class="text-center">
-              <span class="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-gradient-to-br from-emerald-400 to-teal-600 text-white shadow-glow-emerald">
-                <lucide-icon [img]="icons.PartyPopper" [size]="28" />
+              <span class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:ring-blue-500/25">
+                <lucide-icon [img]="icons.CircleCheck" [size]="24" />
               </span>
-              <h3 class="mt-4 text-xl font-extrabold text-slate-900 dark:text-white">{{ r.inserted }} employees imported</h3>
+              <h3 class="mt-4 text-lg font-semibold text-slate-900 dark:text-white">{{ r.inserted }} employees imported</h3>
               <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Each has a login with a temporary password they must change at first sign-in.</p>
               @if (r.credentials?.length) {
-                <div class="mx-auto mt-5 max-w-2xl overflow-hidden rounded-2xl border border-slate-200 text-left dark:border-slate-800">
+                <div class="mx-auto mt-5 max-w-2xl overflow-hidden rounded-lg border border-slate-200 text-left dark:border-slate-800">
                   <div class="flex items-center justify-between bg-slate-50 px-4 py-2.5 dark:bg-slate-900/70">
                     <p class="text-sm font-semibold">Temporary credentials</p>
                     <button type="button" class="btn btn-primary btn-sm" (click)="downloadCredentials(r)"><lucide-icon [img]="icons.Download" [size]="13" /> Download CSV</button>
@@ -165,7 +165,7 @@ const MAX_BYTES = 2 * 1024 * 1024;
                             <td class="font-mono text-xs">{{ c.code }}</td>
                             <td>{{ c.fullName }}</td>
                             <td class="text-xs">{{ c.email }}</td>
-                            <td class="font-mono text-xs font-semibold text-emerald-700 dark:text-emerald-300">{{ c.temporaryPassword }}</td>
+                            <td class="font-mono text-xs font-semibold text-blue-700 dark:text-blue-300">{{ c.temporaryPassword }}</td>
                           </tr>
                         }
                       </tbody>
@@ -179,7 +179,7 @@ const MAX_BYTES = 2 * 1024 * 1024;
         }
       }
 
-      <div modal-footer class="flex flex-col-reverse gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:flex-row sm:justify-between sm:px-6">
+      <div modal-footer class="flex flex-col-reverse gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:flex-row sm:justify-between sm:px-6">
         @if (step() === 'validate') {
           <button type="button" class="btn btn-ghost" (click)="restart()" [disabled]="busy()"><lucide-icon [img]="icons.ArrowLeft" [size]="16" /> Upload another file</button>
         } @else {

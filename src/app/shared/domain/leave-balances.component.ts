@@ -25,13 +25,13 @@ import { MeterComponent } from '../ui/progress';
           </div>
           @if (b.unlimited) {
             <p class="mt-2.5 flex items-baseline gap-1.5">
-              <span class="text-2xl font-extrabold text-slate-900 dark:text-white">∞</span>
+              <span class="text-2xl font-semibold text-slate-900 dark:text-white">∞</span>
               <span class="text-xs text-slate-500 dark:text-slate-400">no annual cap</span>
             </p>
             <p class="mt-2.5 text-xs text-slate-500 dark:text-slate-400">{{ b.used }} used · {{ b.pending }} pending this year</p>
           } @else {
             <p class="mt-2.5 flex items-baseline gap-1.5">
-              <span class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ b.available }}</span>
+              <span class="text-2xl font-semibold text-slate-900 dark:text-white">{{ b.available }}</span>
               <span class="text-xs text-slate-500 dark:text-slate-400">of {{ b.quota }} days available</span>
             </p>
             <div class="mt-2.5">

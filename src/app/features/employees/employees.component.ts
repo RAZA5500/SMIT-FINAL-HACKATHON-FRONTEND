@@ -70,7 +70,7 @@ export class EmployeesComponent implements OnInit {
   protected readonly departmentId = signal('');
   protected readonly designationId = signal('');
   protected readonly page = signal(1);
-  protected readonly view = signal<ViewMode>((safeStorage.get(VIEW_KEY) as ViewMode) || 'grid');
+  protected readonly view = signal<ViewMode>((safeStorage.get(VIEW_KEY) as ViewMode) || 'table');
 
   protected readonly employees = signal<Employee[]>([]);
   protected readonly meta = signal<PageMeta | null>(null);

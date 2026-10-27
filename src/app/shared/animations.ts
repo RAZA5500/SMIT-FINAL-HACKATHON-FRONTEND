@@ -2,11 +2,11 @@ import { animate, group, query, stagger, style, transition, trigger } from '@ang
 
 const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
-/** Smooth route transitions: the old page leaves instantly, the new one rises in. */
+/** Quiet route transitions: the old page leaves instantly, the new one fades up a few pixels. */
 export const routeTransition = trigger('routeTransition', [
   transition('* <=> *', [
     query(':leave', [style({ display: 'none' })], { optional: true }),
-    query(':enter', [style({ opacity: 0, transform: 'translateY(14px)' }), animate(`380ms ${EASE_OUT}`, style({ opacity: 1, transform: 'none' }))], {
+    query(':enter', [style({ opacity: 0, transform: 'translateY(6px)' }), animate(`240ms ${EASE_OUT}`, style({ opacity: 1, transform: 'none' }))], {
       optional: true,
     }),
   ]),
@@ -17,14 +17,14 @@ export const listStagger = trigger('listStagger', [
   transition('* => *', [
     query(
       ':enter',
-      [style({ opacity: 0, transform: 'translateY(12px)' }), stagger(45, [animate(`380ms ${EASE_OUT}`, style({ opacity: 1, transform: 'none' }))])],
+      [style({ opacity: 0, transform: 'translateY(6px)' }), stagger(30, [animate(`260ms ${EASE_OUT}`, style({ opacity: 1, transform: 'none' }))])],
       { optional: true },
     ),
   ]),
 ]);
 
 export const fadeInUp = trigger('fadeInUp', [
-  transition(':enter', [style({ opacity: 0, transform: 'translateY(10px)' }), animate(`360ms ${EASE_OUT}`, style({ opacity: 1, transform: 'none' }))]),
+  transition(':enter', [style({ opacity: 0, transform: 'translateY(6px)' }), animate(`260ms ${EASE_OUT}`, style({ opacity: 1, transform: 'none' }))]),
   transition(':leave', [animate('160ms ease-in', style({ opacity: 0, transform: 'translateY(6px)' }))]),
 ]);
 
@@ -35,7 +35,7 @@ export const fade = trigger('fade', [
 
 /** Right-hand slide-over panel (drawers, diff viewer). */
 export const slideOver = trigger('slideOver', [
-  transition(':enter', [style({ transform: 'translateX(100%)' }), animate(`420ms ${EASE_OUT}`, style({ transform: 'translateX(0)' }))]),
+  transition(':enter', [style({ transform: 'translateX(100%)' }), animate(`320ms ${EASE_OUT}`, style({ transform: 'translateX(0)' }))]),
   transition(':leave', [animate('260ms cubic-bezier(0.4, 0, 1, 1)', style({ transform: 'translateX(100%)' }))]),
 ]);
 
@@ -48,8 +48,8 @@ export const slideInLeft = trigger('slideInLeft', [
 /** Dialog panel: scale + rise. */
 export const modalPop = trigger('modalPop', [
   transition(':enter', [
-    style({ opacity: 0, transform: 'translateY(16px) scale(0.97)' }),
-    animate(`320ms ${EASE_OUT}`, style({ opacity: 1, transform: 'none' })),
+    style({ opacity: 0, transform: 'translateY(8px) scale(0.985)' }),
+    animate(`240ms ${EASE_OUT}`, style({ opacity: 1, transform: 'none' })),
   ]),
   transition(':leave', [animate('180ms ease-in', style({ opacity: 0, transform: 'translateY(8px) scale(0.98)' }))]),
 ]);

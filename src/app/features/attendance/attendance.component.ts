@@ -87,7 +87,7 @@ import { CheckInHeroComponent } from './check-in-hero.component';
           <div class="card flex flex-wrap items-center justify-between gap-4 p-4">
             <div class="flex flex-wrap items-center gap-3">
               <div class="flex items-center gap-2">
-                <label for="board-date" class="text-xs font-semibold uppercase tracking-wider text-slate-500">Date</label>
+                <label for="board-date" class="text-xs font-medium text-slate-500">Date</label>
                 <input
                   id="board-date"
                   type="date"
@@ -98,7 +98,7 @@ import { CheckInHeroComponent } from './check-in-hero.component';
               </div>
 
               <div class="flex items-center gap-2">
-                <label for="board-dept" class="text-xs font-semibold uppercase tracking-wider text-slate-500">Dept</label>
+                <label for="board-dept" class="text-xs font-medium text-slate-500">Dept</label>
                 <select
                   id="board-dept"
                   class="input input-sm max-w-[180px]"
@@ -135,32 +135,32 @@ import { CheckInHeroComponent } from './check-in-hero.component';
           @if (board(); as b) {
             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
               <div class="card p-3 text-center">
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total</p>
-                <p class="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{{ b.total }}</p>
+                <p class="text-xs font-medium text-slate-400">Total</p>
+                <p class="mt-1 text-2xl font-semibold text-slate-900 dark:text-white">{{ b.total }}</p>
               </div>
               <div class="card p-3 text-center">
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Present</p>
-                <p class="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ b.summary['present'] ?? 0 }}</p>
+                <p class="text-xs font-medium text-blue-700 dark:text-blue-400">Present</p>
+                <p class="mt-1 text-2xl font-semibold text-green-700 dark:text-green-400">{{ b.summary['present'] ?? 0 }}</p>
               </div>
               <div class="card p-3 text-center">
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Late</p>
-                <p class="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400">{{ b.summary['late'] ?? 0 }}</p>
+                <p class="text-xs font-medium text-blue-600 dark:text-blue-400">Late</p>
+                <p class="mt-1 text-2xl font-semibold text-blue-600 dark:text-blue-400">{{ b.summary['late'] ?? 0 }}</p>
               </div>
               <div class="card p-3 text-center">
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-orange-600 dark:text-orange-400">Half day</p>
-                <p class="mt-1 text-2xl font-bold text-orange-600 dark:text-orange-400">{{ b.summary['half_day'] ?? 0 }}</p>
+                <p class="text-xs font-medium text-orange-600 dark:text-orange-400">Half day</p>
+                <p class="mt-1 text-2xl font-semibold text-orange-600 dark:text-orange-400">{{ b.summary['half_day'] ?? 0 }}</p>
               </div>
               <div class="card p-3 text-center">
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">On leave</p>
-                <p class="mt-1 text-2xl font-bold text-amber-600 dark:text-amber-400">{{ b.summary['on_leave'] ?? 0 }}</p>
+                <p class="text-xs font-medium text-amber-600 dark:text-amber-400">On leave</p>
+                <p class="mt-1 text-2xl font-semibold text-amber-600 dark:text-amber-400">{{ b.summary['on_leave'] ?? 0 }}</p>
               </div>
               <div class="card p-3 text-center">
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400">Absent</p>
-                <p class="mt-1 text-2xl font-bold text-rose-600 dark:text-rose-400">{{ b.summary['absent'] ?? 0 }}</p>
+                <p class="text-xs font-medium text-rose-600 dark:text-rose-400">Absent</p>
+                <p class="mt-1 text-2xl font-semibold text-rose-600 dark:text-rose-400">{{ b.summary['absent'] ?? 0 }}</p>
               </div>
               <div class="card p-3 text-center">
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Not in yet</p>
-                <p class="mt-1 text-2xl font-bold text-slate-600 dark:text-slate-300">{{ b.summary['not_checked_in'] ?? 0 }}</p>
+                <p class="text-xs font-medium text-slate-500">Not in yet</p>
+                <p class="mt-1 text-2xl font-semibold text-slate-600 dark:text-slate-300">{{ b.summary['not_checked_in'] ?? 0 }}</p>
               </div>
             </div>
 
@@ -187,7 +187,6 @@ import { CheckInHeroComponent } from './check-in-hero.component';
                           <app-empty-state
                             [compact]="true"
                             art="calendar"
-                            tone="slate"
                             title="No attendance records"
                             description="No records match this date or filter."
                           />
@@ -212,22 +211,22 @@ import { CheckInHeroComponent } from './check-in-hero.component';
                         <td>
                           <app-status-badge [status]="row.status" />
                         </td>
-                        <td class="font-mono text-sm">
+                        <td class="num text-sm">
                           {{ row.checkIn ? (row.checkIn | clock) : '—' }}
                           @if (row.lateMinutes > 0) {
                             <span class="ml-1 text-xs text-blue-500">+{{ row.lateMinutes }}m</span>
                           }
                         </td>
-                        <td class="font-mono text-sm">
+                        <td class="num text-sm">
                           {{ row.checkOut ? (row.checkOut | clock) : '—' }}
                         </td>
-                        <td class="font-mono text-sm">
+                        <td class="num text-sm">
                           {{ row.workedMinutes !== null ? (row.workedMinutes | hm) : '—' }}
                         </td>
                         <td>
                           @if (row.source === 'camera') {
-                            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300">
-                              <lucide-icon [img]="icons.ScanFace" [size]="12" /> Face verified
+                            <span class="badge bg-white text-slate-700 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">
+                              <lucide-icon [img]="icons.ScanFace" [size]="12" class="text-blue-600 dark:text-blue-400" /> Face verified
                             </span>
                           } @else if (row.source === 'manual') {
                             <span class="inline-flex items-center gap-1 text-xs text-slate-400">
@@ -261,20 +260,13 @@ import { CheckInHeroComponent } from './check-in-hero.component';
         <div class="space-y-6">
           <div class="card flex flex-wrap items-center justify-between gap-4 p-4">
             <div class="flex items-center gap-3">
-              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Filter status:</span>
+              <span class="text-xs font-medium text-slate-500">Filter status:</span>
               <div class="flex gap-1">
                 @for (s of ['ALL', 'PENDING', 'APPROVED', 'REJECTED']; track s) {
-                  <button
-                    type="button"
-                    class="rounded-xl px-3 py-1.5 text-xs font-semibold transition"
-                    [class]="correctionFilter() === s ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'"
-                    (click)="setCorrectionFilter(s)"
-                  >
-                    {{ s }}
+                  <button type="button" class="pill" [class.pill-active]="correctionFilter() === s" (click)="setCorrectionFilter(s)">
+                    {{ s.charAt(0) + s.slice(1).toLowerCase() }}
                     @if (s === 'PENDING' && approvals.pendingCorrections() > 0) {
-                      <span class="ml-1 rounded-full bg-amber-400 px-1.5 py-0.2 text-[10px] text-slate-950 font-bold">
-                        {{ approvals.pendingCorrections() }}
-                      </span>
+                      <span class="num rounded-full bg-amber-100 px-1.5 text-[11px] font-medium text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">{{ approvals.pendingCorrections() }}</span>
                     }
                   </button>
                 }
@@ -294,7 +286,6 @@ import { CheckInHeroComponent } from './check-in-hero.component';
           } @else if (corrections().length === 0) {
             <app-empty-state
               art="inbox"
-              tone="teal"
               title="No correction requests"
               description="There are no attendance correction requests matching this filter."
             />
@@ -328,7 +319,7 @@ import { CheckInHeroComponent } from './check-in-hero.component';
                         <td class="font-semibold">
                           {{ c.date | day }}
                         </td>
-                        <td class="font-mono text-sm">
+                        <td class="num text-sm">
                           <div>In: <span class="font-semibold">{{ c.requestedCheckIn || 'No change' }}</span></div>
                           <div>Out: <span class="font-semibold">{{ c.requestedCheckOut || 'No change' }}</span></div>
                         </td>
@@ -356,8 +347,8 @@ import { CheckInHeroComponent } from './check-in-hero.component';
                                 </button>
                               </div>
                             } @else {
-                              <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-500/20 dark:bg-amber-500/10 dark:text-amber-300">
-                                <lucide-icon [img]="icons.Clock" [size]="12" /> Pending HR review
+                              <span class="badge bg-white text-slate-700 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">
+                                <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span> Pending HR review
                               </span>
                             }
                           } @else {
@@ -379,7 +370,7 @@ import { CheckInHeroComponent } from './check-in-hero.component';
         <div class="space-y-6">
           <div class="card flex flex-wrap items-center justify-between gap-4 p-4">
             <div class="flex items-center gap-3">
-              <label for="cal-emp" class="text-xs font-semibold uppercase tracking-wider text-slate-500">View Employee Calendar:</label>
+              <label for="cal-emp" class="text-xs font-medium text-slate-500">View Employee Calendar:</label>
               <select
                 id="cal-emp"
                 class="input input-sm min-w-[240px]"
@@ -397,7 +388,6 @@ import { CheckInHeroComponent } from './check-in-hero.component';
           @if (!selectedEmployeeId()) {
             <app-empty-state
               art="calendar"
-              tone="emerald"
               title="Select an employee"
               description="Choose any employee above to view their interactive monthly attendance calendar."
             />
@@ -452,7 +442,7 @@ import { CheckInHeroComponent } from './check-in-hero.component';
                     @for (mc of myCorrections(); track mc.id) {
                       <tr>
                         <td class="font-semibold">{{ mc.date | day }}</td>
-                        <td class="font-mono text-sm">
+                        <td class="num text-sm">
                           In: {{ mc.requestedCheckIn || '—' }} · Out: {{ mc.requestedCheckOut || '—' }}
                         </td>
                         <td class="text-sm">{{ mc.reason }}</td>
@@ -517,7 +507,7 @@ import { CheckInHeroComponent } from './check-in-hero.component';
                   @for (mc of myCorrections(); track mc.id) {
                     <tr>
                       <td class="font-semibold">{{ mc.date | day }}</td>
-                      <td class="font-mono text-sm">
+                      <td class="num text-sm">
                         In: {{ mc.requestedCheckIn || '—' }} · Out: {{ mc.requestedCheckOut || '—' }}
                       </td>
                       <td class="text-sm">{{ mc.reason }}</td>
@@ -569,7 +559,7 @@ import { CheckInHeroComponent } from './check-in-hero.component';
         </div>
       </div>
 
-      <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-secondary" (click)="decisionModalOpen.set(false)">Cancel</button>
         <button
           type="button"

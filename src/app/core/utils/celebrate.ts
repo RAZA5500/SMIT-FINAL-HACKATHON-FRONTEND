@@ -1,5 +1,5 @@
 /** A short burst of confetti for milestone moments (loaded lazily, respects reduced motion). */
-export async function celebrate(colors: string[] = ['#10B981', '#0D9488', '#F59E0B', '#8B5CF6']): Promise<void> {
+export async function celebrate(colors: string[] = ['#3B82F6', '#4F46E5', '#F59E0B', '#8B5CF6']): Promise<void> {
   if (typeof window === 'undefined' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
   try {
     const { default: confetti } = await import('canvas-confetti');

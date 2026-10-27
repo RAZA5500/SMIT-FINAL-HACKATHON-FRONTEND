@@ -34,7 +34,7 @@ import { ModalComponent } from '../../shared/ui/modal.component';
         }
       </div>
     } @else if (items().length === 0) {
-      <app-empty-state art="org" tone="emerald" title="No departments created yet" [description]="canEdit() ? 'Departments group your people and power headcount, absenteeism and payroll reports.' : 'Your Admin has not created any departments yet.'">
+      <app-empty-state art="org" title="No departments created yet" [description]="canEdit() ? 'Departments group your people and power headcount, absenteeism and payroll reports.' : 'Your Admin has not created any departments yet.'">
         @if (canEdit()) {
           <button type="button" class="btn btn-primary" (click)="openCreate()"><lucide-icon [img]="icons.Plus" [size]="16" /> Create first department</button>
         }
@@ -42,10 +42,10 @@ import { ModalComponent } from '../../shared/ui/modal.component';
     } @else {
       <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" [@listStagger]="items().length">
         @for (d of items(); track d.id) {
-          <article class="card card-hover group relative overflow-hidden p-5" [class.opacity-70]="!d.isActive">
+          <article class="card card-hover group relative p-5" [class.opacity-70]="!d.isActive">
             <div class="flex items-start justify-between gap-3">
               <div class="flex min-w-0 items-center gap-3">
-                <span class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 text-sm font-extrabold text-white shadow-md shadow-emerald-500/25">
+                <span class="num grid h-10 w-10 shrink-0 place-items-center rounded-md bg-slate-100 text-xs font-semibold text-slate-700 ring-1 ring-inset ring-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700">
                   {{ (d.code || d.name).slice(0, 3).toUpperCase() }}
                 </span>
                 <div class="min-w-0">
@@ -92,12 +92,12 @@ import { ModalComponent } from '../../shared/ui/modal.component';
           <label class="label" for="dd">Description</label>
           <textarea id="dd" rows="3" class="input resize-none" formControlName="description" placeholder="What does this team do?"></textarea>
         </div>
-        <label class="flex items-center justify-between rounded-2xl border border-slate-200 p-3.5 dark:border-slate-800">
+        <label class="flex items-center justify-between rounded-lg border border-slate-200 p-3.5 dark:border-slate-800">
           <span class="text-sm font-medium">Active <span class="block text-xs font-normal text-slate-500">Inactive departments can't receive new employees.</span></span>
           <input type="checkbox" class="switch" formControlName="isActive" />
         </label>
       </form>
-      <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-secondary" (click)="modalOpen.set(false)">Cancel</button>
         <button type="submit" form="dept-form" class="btn btn-primary" [disabled]="saving()">
           <lucide-icon [img]="saving() ? icons.LoaderCircle : icons.Check" [size]="16" [class.animate-spin]="saving()" /> {{ editing() ? 'Save changes' : 'Create department' }}

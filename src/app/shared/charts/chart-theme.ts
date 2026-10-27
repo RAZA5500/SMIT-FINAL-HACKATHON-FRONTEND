@@ -1,7 +1,7 @@
 import type { ChartOptions, ChartType, Plugin, ScriptableContext, TooltipItem } from 'chart.js';
 
 /**
- * Chart styling for HCM Lite (dataviz method): thin bars (≤24px, 4px rounded data-end,
+ * Chart styling for HCM Lite (dataviz method): thin solid bars (≤24px, 3px rounded data-end,
  * square at the baseline), 2px lines with ringed ≥8px markers, recessive solid hairline
  * grids, a band-wide hover target, value-first tooltips, and one axis per chart.
  */
@@ -13,22 +13,26 @@ export interface ChartPalette {
   grid: string;
   tooltipBg: string;
   tooltipInk: string;
+  tooltipMuted: string;
 }
 
 export function chartPalette(dark: boolean): ChartPalette {
   return dark
-    ? { surface: '#0f172a', ink: '#f1f5f9', muted: '#94a3b8', grid: '#1e293b', tooltipBg: '#f8fafc', tooltipInk: '#0f172a' }
-    : { surface: '#ffffff', ink: '#0f172a', muted: '#64748b', grid: '#e2e8f0', tooltipBg: '#0f172a', tooltipInk: '#f8fafc' };
+    ? { surface: '#141519', ink: '#f0f0f2', muted: '#a0a3ab', grid: '#26272c', tooltipBg: '#f7f7f8', tooltipInk: '#141519', tooltipMuted: '#53565e' }
+    : { surface: '#ffffff', ink: '#141519', muted: '#6b6e77', grid: '#ecedef', tooltipBg: '#141519', tooltipInk: '#f7f7f8', tooltipMuted: '#a0a3ab' };
 }
 
-/** Single-hue series colours per mode (each validated for ≥3:1 on its surface, except brief amber which ships with labels + table view). */
+/**
+ * Series colours per mode (each ≥3:1 on its surface). Brand indigo for structural data
+ * (headcount, payroll, gender); brand blue for attendance (series name kept as `emerald`),
+ * amber = leave, rose = absence, sky = lateness.
+ */
 export const SERIES = {
-  teal: { light: '#0d9488', dark: '#14b8a6' },
-  emerald: { light: '#059669', dark: '#34d399' },
-  amber: { light: '#F59E0B', dark: '#F59E0B' },
-  amberBar: { light: '#d97706', dark: '#fbbf24' },
-  rose: { light: '#f43f5e', dark: '#fb7185' },
-  blue: { light: '#3b82f6', dark: '#60a5fa' },
+  ink: { light: '#4F46E5', dark: '#818CF8' },
+  emerald: { light: '#2563EB', dark: '#60A5FA' },
+  amber: { light: '#d97706', dark: '#fbbf24' },
+  rose: { light: '#e11d48', dark: '#fb7185' },
+  blue: { light: '#0284c7', dark: '#38bdf8' },
 } as const;
 
 export type SeriesName = keyof typeof SERIES;
@@ -37,10 +41,10 @@ export function seriesColor(name: SeriesName, dark: boolean): string {
   return dark ? SERIES[name].dark : SERIES[name].light;
 }
 
-/** Ordinal teal ramp for tenure bands (validated: monotone L, ΔL ≥ 0.06, light end ≥ 2:1). */
+/** Ordinal blue ramp for tenure bands: longer tenure = deeper blue (monotone L). */
 export const TENURE_RAMP = {
-  light: ['#14b8a6', '#0d9488', '#0f766e', '#115e59', '#042f2e'],
-  dark: ['#0f766e', '#0d9488', '#14b8a6', '#2dd4bf', '#99f6e4'],
+  light: ['#93C5FD', '#60A5FA', '#3B82F6', '#2563EB', '#1E3A8A'],
+  dark: ['#1E3A8A', '#1D4ED8', '#3B82F6', '#60A5FA', '#BFDBFE'],
 };
 
 export function alpha(hex: string, a: number): string {
@@ -66,18 +70,18 @@ export function gradientFill<T extends ChartType>(hex: string, fromAlpha: number
   };
 }
 
-const FONT = { family: "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" };
+const FONT = { family: "Geist, system-ui, -apple-system, 'Segoe UI', sans-serif" };
 
 function tooltipBase(p: ChartPalette) {
   return {
     backgroundColor: p.tooltipBg,
-    titleColor: alpha(p.tooltipInk === '#0f172a' ? '#334155' : '#cbd5e1', 1),
+    titleColor: p.tooltipMuted,
     bodyColor: p.tooltipInk,
-    footerColor: alpha(p.tooltipInk === '#0f172a' ? '#475569' : '#94a3b8', 1),
+    footerColor: p.tooltipMuted,
     titleFont: { ...FONT, size: 11, weight: 500 as const },
-    bodyFont: { ...FONT, size: 13, weight: 700 as const },
+    bodyFont: { ...FONT, size: 13, weight: 600 as const },
     footerFont: { ...FONT, size: 11, weight: 500 as const },
-    padding: 10,
+    padding: 12,
     cornerRadius: 10,
     caretSize: 5,
     boxPadding: 4,
@@ -200,7 +204,7 @@ export function barValueLabels(format: (value: number) => string, color: string,
     afterDatasetsDraw(chart) {
       const ctx = chart.ctx;
       ctx.save();
-      ctx.font = `600 11px ${FONT.family}`;
+      ctx.font = `500 11px ${FONT.family}`;
       ctx.fillStyle = color;
       chart.data.datasets.forEach((dataset, di) => {
         const meta = chart.getDatasetMeta(di);
@@ -239,7 +243,7 @@ export function lineEndLabel(format: (value: number) => string, color: string): 
       if (!last || !Number.isFinite(value)) return;
       const ctx = chart.ctx;
       ctx.save();
-      ctx.font = `700 11px ${FONT.family}`;
+      ctx.font = `600 11px ${FONT.family}`;
       ctx.fillStyle = color;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';

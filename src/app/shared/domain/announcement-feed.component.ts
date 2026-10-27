@@ -18,12 +18,7 @@ import { Icons } from '../ui/icons';
   template: `
     <section class="card flex h-full flex-col p-5">
       <header class="mb-4 flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-amber-500/10 text-amber-600 ring-1 ring-inset ring-amber-500/25 dark:text-amber-400">
-            <lucide-icon [img]="icons.Megaphone" [size]="17" />
-          </span>
-          <h3 class="section-title">Announcements</h3>
-        </div>
+        <h3 class="section-title">Announcements</h3>
         <a routerLink="/announcements" class="btn btn-ghost btn-sm">View all <lucide-icon [img]="icons.ArrowRight" [size]="14" /></a>
       </header>
       @if (loading()) {
@@ -33,11 +28,11 @@ import { Icons } from '../ui/icons';
           }
         </div>
       } @else if (list().length === 0) {
-        <app-empty-state [compact]="true" art="megaphone" tone="amber" title="No announcements yet" description="Company news posted by Admin or HR will show up here." />
+        <app-empty-state [compact]="true" art="megaphone" title="No announcements yet" description="Company news posted by Admin or HR will show up here." />
       } @else {
         <ul class="space-y-3" [@listStagger]="list().length">
           @for (a of list(); track a.id) {
-            <li class="rounded-2xl border p-3.5 transition hover:shadow-md" [class]="a.pinned ? 'border-amber-300/60 bg-amber-50/60 dark:border-amber-500/30 dark:bg-amber-500/5' : 'border-slate-100 bg-white/60 dark:border-slate-800 dark:bg-slate-900/40'">
+            <li class="rounded-lg border p-3.5 transition hover:shadow-xs" [class]="a.pinned ? 'border-amber-300/60 bg-amber-50/60 dark:border-amber-500/30 dark:bg-amber-500/5' : 'border-slate-100 bg-white/60 dark:border-slate-800 dark:bg-slate-900/40'">
               <div class="flex items-start gap-3">
                 <app-avatar [name]="a.createdByName" size="sm" />
                 <div class="min-w-0 flex-1">

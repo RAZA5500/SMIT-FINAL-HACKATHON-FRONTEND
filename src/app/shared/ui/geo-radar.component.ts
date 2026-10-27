@@ -63,7 +63,7 @@ export class GeoRadarComponent {
   protected readonly fenceR = 60;
   protected readonly radiusLabel = computed(() => formatMeters(this.radiusMeters()));
   protected readonly tint = computed(
-    () => ({ scanning: '#F59E0B', unknown: '#F59E0B', inside: '#10B981', outside: '#F43F5E', error: '#94A3B8' })[this.state()],
+    () => ({ scanning: '#F59E0B', unknown: '#F59E0B', inside: '#3B82F6', outside: '#F43F5E', error: '#94A3B8' })[this.state()],
   );
   protected readonly dot = computed(() => {
     const distance = this.distanceMeters();

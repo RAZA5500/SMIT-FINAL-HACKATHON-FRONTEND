@@ -15,63 +15,68 @@ import { AvatarComponent, RoleBadgeComponent } from '../shared/ui/badges';
 import { Icons } from '../shared/ui/icons';
 import { NotificationBellComponent } from './notification-bell.component';
 
-/** Glass topbar: page title, live company clock, theme switch, AI, notifications and account menu. */
+/** Topbar: breadcrumb title, company clock, AI, theme switch, notifications and account menu. */
 @Component({
   selector: 'app-topbar',
   imports: [LucideAngularModule, RouterLink, AvatarComponent, RoleBadgeComponent, NotificationBellComponent],
   animations: [dropdown],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/70 backdrop-blur-md dark:border-slate-800/70 dark:bg-slate-950/60">
-      <div class="flex h-16 items-center gap-2 px-3 sm:gap-3 sm:px-6 lg:px-8">
+    <header class="border-b border-slate-200/70 bg-white/70 backdrop-blur-xl backdrop-saturate-150 dark:border-white/[0.06] dark:bg-slate-950/70">
+      <div class="flex h-16 items-center gap-1.5 px-3 sm:gap-2 sm:px-6 lg:px-8">
         <button type="button" class="btn btn-ghost btn-icon lg:hidden" (click)="menu.emit()" aria-label="Open navigation">
-          <lucide-icon [img]="icons.Menu" [size]="20" />
+          <lucide-icon [img]="icons.Menu" [size]="18" />
         </button>
         <button type="button" class="btn btn-ghost btn-icon hidden lg:inline-flex" (click)="toggleCollapse.emit()" [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
-          <lucide-icon [img]="collapsed() ? icons.PanelLeftOpen : icons.PanelLeftClose" [size]="19" />
+          <lucide-icon [img]="collapsed() ? icons.PanelLeftOpen : icons.PanelLeftClose" [size]="18" />
         </button>
 
-        <div class="min-w-0 flex-1">
-          <p class="truncate text-[15px] font-bold text-slate-900 dark:text-white sm:text-base">{{ title() }}</p>
-          <p class="hidden truncate text-xs text-slate-500 dark:text-slate-400 sm:block">{{ policies.companyName() }}</p>
-        </div>
+        <p class="flex min-w-0 flex-1 items-center gap-2 text-sm">
+          <span class="hidden truncate text-slate-500 dark:text-slate-400 sm:inline">{{ policies.companyName() }}</span>
+          <span class="hidden text-slate-300 dark:text-slate-600 sm:inline" aria-hidden="true">/</span>
+          <span class="truncate font-medium text-slate-900 dark:text-white">{{ title() }}</span>
+        </p>
 
-        <span class="hidden items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-3 py-1.5 font-mono text-xs font-semibold text-slate-600 dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-300 md:inline-flex" [title]="'Company time (' + policies.timezone() + ')'">
-          <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping-soft rounded-full bg-emerald-400"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span></span>
-          {{ liveTime() }}
-        </span>
-
-        <button type="button" class="btn btn-ai hidden px-3.5 py-2 sm:inline-flex" (click)="assistant.openDrawer()">
-          <lucide-icon [img]="icons.Sparkles" [size]="16" /> Ask AI
-        </button>
-
-        <button type="button" class="btn btn-ghost btn-icon" (click)="theme.toggle()" [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
-          <span class="relative grid h-5 w-5 place-items-center">
-            <span class="absolute transition-all duration-500" [class]="theme.isDark() ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'">
-              <lucide-icon [img]="icons.Moon" [size]="19" />
-            </span>
-            <span class="absolute text-amber-400 transition-all duration-500" [class]="theme.isDark() ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-0 opacity-0'">
-              <lucide-icon [img]="icons.Sun" [size]="19" />
-            </span>
+        <span
+          class="hidden items-center gap-2 rounded-full border border-slate-200/80 bg-white/70 px-3 py-1.5 text-xs font-medium text-slate-600 shadow-xs dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-300 md:inline-flex"
+          [title]="'Company time (' + policies.timezone() + ')'"
+        >
+          <span class="relative flex h-2 w-2">
+            <span class="absolute inline-flex h-full w-full animate-ping-soft rounded-full bg-blue-400"></span>
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-blue-500"></span>
           </span>
+          <span class="num">{{ liveTime() }}</span>
+        </span>
+        <span class="mx-1 hidden h-6 w-px bg-slate-200 dark:bg-white/10 md:block" aria-hidden="true"></span>
+
+        <button type="button" class="btn btn-ai btn-sm hidden rounded-full px-3.5 sm:inline-flex" (click)="assistant.openDrawer()">
+          <lucide-icon [img]="icons.Sparkles" [size]="14" /> Ask AI
+        </button>
+        <button type="button" class="btn btn-ghost btn-icon text-violet-600 dark:text-violet-300 sm:hidden" (click)="assistant.openDrawer()" aria-label="Ask the AI assistant">
+          <lucide-icon [img]="icons.Sparkles" [size]="18" />
+        </button>
+
+        <button type="button" class="btn btn-ghost btn-icon group" (click)="theme.toggle()" [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'" [title]="theme.isDark() ? 'Light mode' : 'Dark mode'">
+          <lucide-icon [img]="theme.isDark() ? icons.Sun : icons.Moon" [size]="18" class="transition-transform duration-500 ease-spring group-hover:rotate-[24deg] group-active:rotate-[180deg]" />
         </button>
 
         <app-notification-bell />
 
         @if (auth.user(); as user) {
           <div class="relative">
-            <button type="button" class="flex items-center gap-2 rounded-2xl p-1 pr-2 transition hover:bg-slate-100 dark:hover:bg-slate-800" (click)="menuOpen.set(!menuOpen())" [attr.aria-expanded]="menuOpen()" aria-label="Account menu">
+            <button type="button" class="ml-1 flex items-center gap-1.5 rounded-full p-0.5 outline-none ring-2 ring-transparent transition duration-200 hover:scale-105 hover:ring-blue-400/40 focus-visible:ring-blue-500/50" (click)="menuOpen.set(!menuOpen())" [attr.aria-expanded]="menuOpen()" aria-label="Account menu">
               <app-avatar [name]="user.fullName" size="sm" />
-              <lucide-icon [img]="icons.ChevronDown" [size]="15" class="hidden text-slate-400 sm:block" />
             </button>
             @if (menuOpen()) {
-              <div @dropdown class="absolute right-0 top-12 z-50 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-2xl shadow-slate-900/15 dark:border-slate-800 dark:bg-slate-900">
-                <div class="px-3 py-2.5">
-                  <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ user.fullName }}</p>
-                  <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ user.email }}</p>
-                  <div class="mt-1.5"><app-role-badge [role]="user.role" /></div>
+              <div @dropdown class="absolute right-0 top-12 z-50 w-72 overflow-hidden rounded-xl border border-slate-200/80 bg-white/95 p-1.5 shadow-lift backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/95">
+                <div class="relative mb-1 flex items-center gap-3 overflow-hidden rounded-lg bg-gradient-to-br from-blue-50 via-white to-violet-50 px-3 py-3 dark:from-blue-500/10 dark:via-slate-900 dark:to-violet-500/10">
+                  <app-avatar [name]="user.fullName" size="md" />
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ user.fullName }}</p>
+                    <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ user.email }}</p>
+                    <div class="mt-1.5"><app-role-badge [role]="user.role" /></div>
+                  </div>
                 </div>
-                <div class="my-1 h-px bg-slate-100 dark:bg-slate-800"></div>
                 @if (auth.hasEmployeeProfile()) {
                   <a routerLink="/profile" class="menu-item" (click)="menuOpen.set(false)"><lucide-icon [img]="icons.UserRound" [size]="16" /> My profile</a>
                 }
@@ -88,15 +93,17 @@ import { NotificationBellComponent } from './notification-bell.component';
     .menu-item {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      border-radius: 0.75rem;
+      gap: 0.65rem;
+      border-radius: 0.5rem;
       padding: 0.55rem 0.75rem;
       font-size: 0.875rem;
-      font-weight: 500;
-      transition: background-color 0.15s;
+      transition:
+        background-color 0.15s,
+        padding-left 0.2s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .menu-item:hover {
-      background: rgb(148 163 184 / 0.14);
+      background: rgb(160 163 171 / 0.14);
+      padding-left: 0.95rem;
     }
   `,
 })

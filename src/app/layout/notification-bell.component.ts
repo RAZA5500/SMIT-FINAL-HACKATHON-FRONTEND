@@ -9,13 +9,14 @@ import { AgoPipe } from '../shared/pipes/format.pipes';
 import { EmptyStateComponent } from '../shared/ui/empty-state.component';
 import { Icons } from '../shared/ui/icons';
 
-const TYPE_STYLE: Record<NotificationType, { icon: LucideIconData; chip: string }> = {
-  leave: { icon: Icons.TreePalm, chip: 'bg-amber-500/15 text-amber-600 dark:text-amber-400' },
-  attendance: { icon: Icons.CalendarCheck, chip: 'bg-blue-500/15 text-blue-600 dark:text-blue-400' },
-  payroll: { icon: Icons.Wallet, chip: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' },
-  announcement: { icon: Icons.Megaphone, chip: 'bg-amber-500/15 text-amber-600 dark:text-amber-400' },
-  account: { icon: Icons.KeyRound, chip: 'bg-slate-500/15 text-slate-600 dark:text-slate-300' },
-  system: { icon: Icons.Info, chip: 'bg-violet-500/15 text-violet-600 dark:text-violet-400' },
+/** The icon names the type; chips stay neutral. */
+const TYPE_ICON: Record<NotificationType, LucideIconData> = {
+  leave: Icons.TreePalm,
+  attendance: Icons.CalendarCheck,
+  payroll: Icons.Wallet,
+  announcement: Icons.Megaphone,
+  account: Icons.KeyRound,
+  system: Icons.Info,
 };
 
 const ENTITY_ROUTES: Record<string, string> = {
@@ -35,31 +36,23 @@ const ENTITY_ROUTES: Record<string, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="relative">
-      <button
-        type="button"
-        class="btn btn-ghost btn-icon relative"
-        [class.animate-wiggle]="wiggle()"
-        (click)="toggle()"
-        [attr.aria-expanded]="open()"
-        aria-label="Notifications"
-      >
-        <lucide-icon [img]="store.unread() ? icons.BellRing : icons.Bell" [size]="20" />
+      <button type="button" class="btn btn-ghost btn-icon relative" (click)="toggle()" [attr.aria-expanded]="open()" aria-label="Notifications">
+        <lucide-icon [img]="icons.Bell" [size]="18" />
         @if (store.unread()) {
-          <span class="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center">
-            <span class="absolute inline-flex h-full w-full animate-ping-soft rounded-full bg-rose-400"></span>
-            <span class="relative grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white ring-2 ring-white dark:ring-slate-950">{{ store.unread() > 9 ? '9+' : store.unread() }}</span>
-          </span>
+          <span class="num absolute right-0.5 top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-medium text-white ring-2 ring-slate-50 dark:ring-slate-950">{{
+            store.unread() > 9 ? '9+' : store.unread()
+          }}</span>
         }
       </button>
 
       @if (open()) {
         <div
           @dropdown
-          class="fixed inset-x-3 top-16 z-50 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15 dark:border-slate-800 dark:bg-slate-900 sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-[24rem]"
+          class="fixed inset-x-3 top-16 z-50 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lift dark:border-slate-800 dark:bg-slate-900 sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-[24rem]"
         >
-          <header class="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+          <header class="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-800">
             <div>
-              <p class="font-semibold text-slate-900 dark:text-white">Notifications</p>
+              <p class="text-sm font-semibold text-slate-900 dark:text-white">Notifications</p>
               <p class="text-xs text-slate-500 dark:text-slate-400">{{ store.unread() ? store.unread() + ' unread' : 'All caught up' }}</p>
             </div>
             <button type="button" class="btn btn-ghost btn-sm" [disabled]="!store.unread()" (click)="markAll()">
@@ -74,24 +67,24 @@ const ENTITY_ROUTES: Record<string, string> = {
                 }
               </div>
             } @else if (items().length === 0) {
-              <app-empty-state [compact]="true" art="inbox" tone="emerald" title="You're all caught up" description="Leave decisions, corrections and payslips will appear here." />
+              <app-empty-state [compact]="true" art="inbox" title="You're all caught up" description="Leave decisions, corrections and payslips will appear here." />
             } @else {
               <ul>
                 @for (n of items(); track n.id) {
                   <li>
                     <button
                       type="button"
-                      class="flex w-full items-start gap-3 border-b border-slate-50 px-4 py-3 text-left transition hover:bg-slate-50 dark:border-slate-800/60 dark:hover:bg-slate-800/50"
+                      class="flex w-full items-start gap-3 border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/50"
                       (click)="openNotification(n)"
                     >
-                      <span class="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl" [class]="style(n).chip">
-                        <lucide-icon [img]="style(n).icon" [size]="16" />
+                      <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-md bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                        <lucide-icon [img]="iconFor(n)" [size]="15" />
                       </span>
                       <span class="min-w-0 flex-1">
                         <span class="flex items-center gap-2">
-                          <span class="truncate text-sm font-semibold" [class]="n.isRead ? 'text-slate-600 dark:text-slate-300' : 'text-slate-900 dark:text-white'">{{ n.title }}</span>
+                          <span class="truncate text-sm font-medium" [class]="n.isRead ? 'text-slate-600 dark:text-slate-300' : 'text-slate-900 dark:text-white'">{{ n.title }}</span>
                           @if (!n.isRead) {
-                            <span class="h-2 w-2 shrink-0 rounded-full bg-emerald-500"></span>
+                            <span class="h-2 w-2 shrink-0 rounded-full bg-blue-500"></span>
                           }
                         </span>
                         <span class="mt-0.5 line-clamp-2 block text-xs leading-snug text-slate-500 dark:text-slate-400">{{ n.message }}</span>
@@ -118,21 +111,18 @@ export class NotificationBellComponent {
   protected readonly open = signal(false);
   protected readonly loading = signal(false);
   protected readonly items = signal<AppNotification[]>([]);
-  protected readonly wiggle = signal(false);
 
   constructor() {
     effect(() => {
       if (this.store.pulse() === 0) return;
       untracked(() => {
-        this.wiggle.set(true);
-        setTimeout(() => this.wiggle.set(false), 950);
         if (this.open()) this.load();
       });
     });
   }
 
-  protected style(n: AppNotification) {
-    return TYPE_STYLE[n.type] ?? TYPE_STYLE.system;
+  protected iconFor(n: AppNotification): LucideIconData {
+    return TYPE_ICON[n.type] ?? TYPE_ICON.system;
   }
 
   protected toggle(): void {

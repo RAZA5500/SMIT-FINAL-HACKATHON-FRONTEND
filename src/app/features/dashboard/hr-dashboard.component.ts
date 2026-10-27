@@ -38,7 +38,7 @@ import { KpiCardComponent } from '../../shared/ui/kpi-card.component';
   template: `
     @if (!loading() && s()?.today?.headcount === 0 && (s()?.headcount?.total ?? 0) === 0) {
       <div class="mb-6">
-        <app-empty-state art="team" tone="emerald" title="No employees registered yet" description="Register your first employee — a login with a temporary password is created automatically — or bulk-import a CSV with dry-run validation.">
+        <app-empty-state art="team" title="No employees registered yet" description="Register your first employee — a login with a temporary password is created automatically — or bulk-import a CSV with dry-run validation.">
           <button type="button" class="btn btn-primary" (click)="go('register')"><lucide-icon [img]="icons.UserPlus" [size]="16" /> Register employee</button>
           <button type="button" class="btn btn-secondary" (click)="go('import')"><lucide-icon [img]="icons.FileSpreadsheet" [size]="16" /> Import CSV</button>
         </app-empty-state>
@@ -51,7 +51,7 @@ import { KpiCardComponent } from '../../shared/ui/kpi-card.component';
         <app-kpi-card label="Present today" [value]="today()?.present" [icon]="icons.CircleCheck" tone="emerald" [hint]="presentHint()" [loading]="loading()" />
         <app-kpi-card label="On leave today" [value]="today()?.onLeave" [icon]="icons.TreePalm" tone="amber" [hint]="leaveHint()" [loading]="loading()" />
         <app-kpi-card label="Late today" [value]="today()?.late" [icon]="icons.Clock" tone="blue" [hint]="lateHint()" [loading]="loading()" />
-        <a routerLink="/leave" class="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
+        <a routerLink="/leave" class="block rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/40 [&_.card]:hover:border-slate-300 dark:[&_.card]:hover:border-slate-700">
           <app-kpi-card label="Pending approvals" [value]="today()?.pendingApprovals?.total" [icon]="icons.Inbox" tone="amber" [hint]="pendingHint()" [loading]="loading()" />
         </a>
       </div>
@@ -67,8 +67,6 @@ import { KpiCardComponent } from '../../shared/ui/kpi-card.component';
         <app-chart-card
           title="Attendance trend"
           subtitle="Daily attendance rate (present + late + ½ half-days ÷ expected)"
-          [icon]="icons.Activity"
-          tone="amber"
           [loading]="loading()"
           [refreshing]="refreshing()"
           [empty]="trend().labels.length === 0"
@@ -78,15 +76,13 @@ import { KpiCardComponent } from '../../shared/ui/kpi-card.component';
           [table]="trendTable()"
           [height]="270"
         >
-          <app-line-chart series="amber" [labels]="trend().labels" [values]="trend().values" [max]="100" [format]="pct" [footer]="trendFooter" ariaLabel="Attendance trend" />
+          <app-line-chart series="emerald" [labels]="trend().labels" [values]="trend().values" [max]="100" [format]="pct" [footer]="trendFooter" ariaLabel="Attendance trend" />
         </app-chart-card>
       </div>
       <div class="xl:col-span-2">
         <app-chart-card
           title="Leave by type"
           subtitle="Approved leave days in the period"
-          [icon]="icons.TreePalm"
-          tone="amber"
           [loading]="loading()"
           [refreshing]="refreshing()"
           [empty]="leaveTotal() === 0"
@@ -95,7 +91,7 @@ import { KpiCardComponent } from '../../shared/ui/kpi-card.component';
           [table]="leaveTable()"
           [height]="270"
         >
-          <app-bar-chart series="amberBar" [labels]="leave().labels" [values]="leave().values" [footer]="leaveFooter" [format]="days" ariaLabel="Leave by type" />
+          <app-bar-chart series="amber" [labels]="leave().labels" [values]="leave().values" [footer]="leaveFooter" [format]="days" ariaLabel="Leave by type" />
         </app-chart-card>
       </div>
     </div>
@@ -104,8 +100,6 @@ import { KpiCardComponent } from '../../shared/ui/kpi-card.component';
       <app-chart-card
         title="Absenteeism by department"
         subtitle="Absent days ÷ expected working days"
-        [icon]="icons.CalendarX2"
-        tone="rose"
         [loading]="loading()"
         [refreshing]="refreshing()"
         [empty]="absenteeism().labels.length === 0"
@@ -119,8 +113,7 @@ import { KpiCardComponent } from '../../shared/ui/kpi-card.component';
       </app-chart-card>
 
       <section class="card flex flex-col p-5">
-        <header class="mb-4 flex items-center gap-3">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-blue-500/10 text-blue-600 ring-1 ring-inset ring-blue-500/20 dark:text-blue-400"><lucide-icon [img]="icons.Timer" [size]="17" /></span>
+        <header class="mb-4">
           <div>
             <h3 class="section-title">Top 5 late-comers</h3>
             <p class="text-xs text-slate-500 dark:text-slate-400">{{ s()?.lateComers?.totalLateArrivals ?? 0 }} late arrivals by {{ s()?.lateComers?.employeesWithLates ?? 0 }} people</p>
@@ -133,7 +126,7 @@ import { KpiCardComponent } from '../../shared/ui/kpi-card.component';
             }
           </div>
         } @else if ((s()?.lateComers?.data ?? []).length === 0) {
-          <app-empty-state [compact]="true" art="clock" tone="blue" title="Nobody was late in this period" description="Late arrivals after the grace time are ranked here." />
+          <app-empty-state [compact]="true" art="clock" title="Nobody was late in this period" description="Late arrivals after the grace time are ranked here." />
         } @else {
           <div class="table-wrap">
             <table class="data-table">
@@ -149,17 +142,17 @@ import { KpiCardComponent } from '../../shared/ui/kpi-card.component';
               <tbody [@listStagger]="s()!.lateComers.data.length">
                 @for (l of s()!.lateComers.data; track l.employeeId; let i = $index) {
                   <tr class="row-click" [routerLink]="['/employees', l.employeeId]">
-                    <td class="w-8 font-bold text-slate-400">{{ i + 1 }}</td>
+                    <td class="w-8 font-semibold text-slate-400">{{ i + 1 }}</td>
                     <td>
                       <div class="flex items-center gap-2.5">
                         <app-avatar [name]="l.fullName" size="xs" />
                         <div class="min-w-0">
-                          <p class="truncate font-semibold text-slate-900 dark:text-white">{{ l.fullName }}</p>
+                          <p class="truncate font-medium text-slate-900 dark:text-white">{{ l.fullName }}</p>
                           <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ l.code }} · {{ l.department }}</p>
                         </div>
                       </div>
                     </td>
-                    <td class="num text-right"><span class="badge bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-400/25">{{ l.lateCount }}</span></td>
+                    <td class="num text-right font-medium text-slate-900 dark:text-white">{{ l.lateCount }}</td>
                     <td class="num text-right">{{ l.avgLateMinutes | num: 0 }} min</td>
                     <td class="num whitespace-nowrap text-right text-xs">{{ l.lastLateDate | day: 'short' }}</td>
                   </tr>

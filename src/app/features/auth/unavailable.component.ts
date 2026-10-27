@@ -13,10 +13,10 @@ import { AuthLayoutComponent } from './auth-layout.component';
   template: `
     <app-auth-layout>
       <div class="card p-7 text-center">
-        <span class="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-rose-500/10 text-rose-500">
+        <span class="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-rose-50 text-rose-600 ring-1 ring-inset ring-rose-200 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-500/25">
           <lucide-icon [img]="icons.ShieldAlert" [size]="30" />
         </span>
-        <h1 class="mt-5 text-2xl font-extrabold text-slate-900 dark:text-white">Can't reach the server</h1>
+        <h1 class="mt-5 text-2xl font-semibold text-slate-900 dark:text-white">Can't reach the server</h1>
         <p class="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
           HCM Lite couldn't contact its API. Make sure the backend is running (<code class="kbd">npm run start:dev</code> in <code class="kbd">backend/</code>) and try again.
         </p>

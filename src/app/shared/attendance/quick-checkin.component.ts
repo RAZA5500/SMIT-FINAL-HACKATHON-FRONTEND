@@ -16,12 +16,11 @@ import { ProgressRingComponent } from '../ui/progress';
   imports: [LucideAngularModule, RouterLink, StatusBadgeComponent, ProgressRingComponent, ClockPipe, HoursMinutesPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="card relative h-full overflow-hidden p-5">
-      <div class="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-emerald-400/20 blur-3xl"></div>
-      <div class="relative flex items-start justify-between gap-3">
+    <section class="card h-full p-5">
+      <div class="flex items-start justify-between gap-3">
         <div>
           <p class="eyebrow">Today · {{ shift() }}</p>
-          <p class="mt-1 font-mono text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{{ liveTime() }}</p>
+          <p class="num mt-1 text-[1.625rem] font-semibold tracking-tight text-slate-900 dark:text-white">{{ liveTime() }}</p>
         </div>
         @if (store.record(); as r) {
           <app-status-badge [status]="r.status" size="md" />
@@ -32,20 +31,20 @@ import { ProgressRingComponent } from '../ui/progress';
         }
       </div>
 
-      <div class="relative mt-5 flex items-center gap-5">
-        <app-progress-ring [value]="progress()" [size]="92" [stroke]="9" [tone]="store.canCheckOut() ? 'emerald' : 'teal'" [marker]="halfDayMarker()">
+      <div class="mt-5 flex items-center gap-5">
+        <app-progress-ring [value]="progress()" [size]="88" [stroke]="7" [tone]="store.canCheckOut() ? 'emerald' : 'teal'" [marker]="halfDayMarker()">
           <div>
-            <p class="text-sm font-extrabold text-slate-900 dark:text-white">{{ workedMinutes() | hm }}</p>
-            <p class="text-[10px] text-slate-500">worked</p>
+            <p class="num text-sm font-semibold text-slate-900 dark:text-white">{{ workedMinutes() | hm }}</p>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">worked</p>
           </div>
         </app-progress-ring>
         <div class="min-w-0 flex-1 space-y-1.5 text-sm">
-          <p class="flex justify-between gap-2"><span class="muted">Check-in</span><span class="font-semibold">{{ store.record()?.checkInAt | clock }}</span></p>
-          <p class="flex justify-between gap-2"><span class="muted">Check-out</span><span class="font-semibold">{{ store.record()?.checkOutAt | clock }}</span></p>
+          <p class="flex justify-between gap-2"><span class="muted">Check-in</span><span class="num font-medium">{{ store.record()?.checkInAt | clock }}</span></p>
+          <p class="flex justify-between gap-2"><span class="muted">Check-out</span><span class="num font-medium">{{ store.record()?.checkOutAt | clock }}</span></p>
         </div>
       </div>
 
-      <div class="relative mt-5 flex flex-wrap gap-2">
+      <div class="mt-5 flex flex-wrap gap-2">
         @if (store.loading() && !store.today()) {
           <div class="skeleton h-11 w-full"></div>
         } @else if (store.canCheckIn()) {
@@ -56,15 +55,15 @@ import { ProgressRingComponent } from '../ui/progress';
             <lucide-icon [img]="icons.ScanFace" [size]="16" /> Camera
           </button>
         } @else if (store.canCheckOut()) {
-          <button type="button" class="btn btn-amber flex-1" [disabled]="!!store.busy()" (click)="store.quickPunch('out')">
+          <button type="button" class="btn btn-navy flex-1" [disabled]="!!store.busy()" (click)="store.quickPunch('out')">
             <lucide-icon [img]="store.busy() === 'out' ? icons.LoaderCircle : icons.LogOut" [size]="16" [class.animate-spin]="store.busy() === 'out'" /> Check out
           </button>
           <button type="button" class="btn btn-secondary" (click)="store.openCamera('out')" title="Camera + GPS check-out">
             <lucide-icon [img]="icons.ScanFace" [size]="16" />
           </button>
         } @else if (store.finishedForDay()) {
-          <p class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-50 py-2.5 text-sm font-semibold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
-            <lucide-icon [img]="icons.CircleCheck" [size]="16" /> Done for today
+          <p class="flex w-full items-center justify-center gap-2 rounded-md border border-slate-200 bg-slate-50 py-2 text-sm font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-200">
+            <lucide-icon [img]="icons.CircleCheck" [size]="16" class="text-blue-600 dark:text-blue-400" /> Done for today
           </p>
         }
         <a routerLink="/attendance" class="btn btn-ghost btn-sm w-full">Open attendance <lucide-icon [img]="icons.ArrowRight" [size]="14" /></a>

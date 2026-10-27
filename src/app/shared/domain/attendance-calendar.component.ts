@@ -10,7 +10,7 @@ import { StatusBadgeComponent, statusLabel } from '../ui/badges';
 import { Icons } from '../ui/icons';
 
 const CELL: Record<AttendanceStatus, { cell: string; dot: string }> = {
-  present: { cell: 'bg-emerald-500/15 text-emerald-800 ring-emerald-500/30 dark:text-emerald-200', dot: 'bg-emerald-500' },
+  present: { cell: 'bg-green-500/15 text-green-800 ring-green-500/30 dark:text-green-200', dot: 'bg-green-500' },
   late: { cell: 'bg-blue-500/15 text-blue-800 ring-blue-500/30 dark:text-blue-200', dot: 'bg-blue-500' },
   half_day: { cell: 'bg-orange-500/15 text-orange-800 ring-orange-500/30 dark:text-orange-200', dot: 'bg-orange-500' },
   missing_checkout: { cell: 'bg-slate-500/15 text-slate-700 ring-slate-500/30 dark:text-slate-200', dot: 'bg-slate-500' },
@@ -42,7 +42,7 @@ interface DayCell {
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-1">
         <button type="button" class="btn btn-ghost btn-icon" (click)="go(-1)" aria-label="Previous month"><lucide-icon [img]="icons.ChevronLeft" [size]="18" /></button>
-        <h3 class="min-w-[9.5rem] text-center text-base font-bold text-slate-900 dark:text-white">{{ monthLabel() }}</h3>
+        <h3 class="min-w-[9.5rem] text-center text-base font-semibold text-slate-900 dark:text-white">{{ monthLabel() }}</h3>
         <button type="button" class="btn btn-ghost btn-icon" (click)="go(1)" [disabled]="isCurrentMonth()" aria-label="Next month"><lucide-icon [img]="icons.ChevronRight" [size]="18" /></button>
       </div>
       <div class="flex flex-wrap gap-1.5">
@@ -54,7 +54,7 @@ interface DayCell {
       </div>
     </div>
 
-    <div class="mt-4 grid grid-cols-7 gap-1.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+    <div class="mt-4 grid grid-cols-7 gap-1.5 text-center text-xs font-medium text-slate-400">
       @for (d of weekdays; track d) {
         <span class="py-1">{{ d }}</span>
       }
@@ -66,7 +66,7 @@ interface DayCell {
         } @else {
           <button
             type="button"
-            class="group relative flex aspect-square flex-col items-center justify-center rounded-xl text-sm font-semibold ring-1 ring-inset transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 sm:rounded-2xl"
+            class="group relative flex aspect-square flex-col items-center justify-center rounded-lg text-sm font-semibold ring-1 ring-inset transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:rounded-lg"
             [class]="cellClass(c) + (selected() === c.date ? ' ring-2 !ring-slate-900 dark:!ring-white' : '')"
             [attr.aria-label]="ariaFor(c)"
             (click)="select(c)"
@@ -75,10 +75,10 @@ interface DayCell {
             @if (c.record) {
               <span class="mt-0.5 h-1.5 w-1.5 rounded-full sm:h-2 sm:w-2" [class]="dotFor(c.record.status)"></span>
             } @else if (c.holiday) {
-              <lucide-icon [img]="icons.PartyPopper" [size]="11" class="mt-0.5 text-teal-500" />
+              <lucide-icon [img]="icons.PartyPopper" [size]="11" class="mt-0.5 text-indigo-500" />
             }
             @if (c.today) {
-              <span class="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
+              <span class="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-blue-500 ring-2 ring-white dark:ring-slate-900"></span>
             }
           </button>
         }
@@ -90,12 +90,12 @@ interface DayCell {
         <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" [class]="dotFor(s)"></span>{{ labelFor(s) }}</span>
       }
       <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-600"></span>Weekend</span>
-      <span class="inline-flex items-center gap-1.5"><lucide-icon [img]="icons.PartyPopper" [size]="11" class="text-teal-500" />Holiday</span>
+      <span class="inline-flex items-center gap-1.5"><lucide-icon [img]="icons.PartyPopper" [size]="11" class="text-indigo-500" />Holiday</span>
     </div>
 
     @if (selectedCell(); as c) {
       <div @expand class="mt-4">
-        <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-900/60">
+        <div class="rounded-lg border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-900/60">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <p class="font-semibold text-slate-900 dark:text-white">{{ longDate(c.date) }}</p>
             @if (c.record) {
@@ -120,7 +120,7 @@ interface DayCell {
               <p class="mt-2 text-xs text-amber-700 dark:text-amber-300">{{ r.leaveTypeName }} leave</p>
             }
             @if (r.checkInVerification; as v) {
-              <p class="mt-2 flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-300">
+              <p class="mt-2 flex items-center gap-1.5 text-xs text-blue-700 dark:text-blue-300">
                 <lucide-icon [img]="icons.ScanFace" [size]="13" /> Camera verified · {{ meters(v.distanceMeters) }} from office (±{{ v.gpsAccuracy }} m)
               </p>
             }
@@ -225,7 +225,7 @@ export class AttendanceCalendarComponent {
 
   protected cellClass(c: DayCell): string {
     if (c.record) return CELL[c.record.status].cell;
-    if (c.holiday) return 'bg-teal-50 text-teal-700 ring-teal-300/60 dark:bg-teal-500/10 dark:text-teal-300 dark:ring-teal-500/30';
+    if (c.holiday) return 'bg-indigo-50 text-indigo-700 ring-indigo-300/60 dark:bg-indigo-500/10 dark:text-indigo-300 dark:ring-indigo-500/30';
     if (c.weekend) return 'bg-slate-100/80 text-slate-400 ring-transparent dark:bg-slate-800/50 dark:text-slate-500';
     if (c.future || c.beforeJoin) return 'bg-transparent text-slate-300 ring-slate-100 dark:text-slate-600 dark:ring-slate-800';
     return 'bg-white text-slate-600 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700';

@@ -53,23 +53,6 @@ export function initials(name: string | null | undefined): string {
   return (first + last).toUpperCase();
 }
 
-/** Stable gradient for an avatar, picked from the name. */
-export function avatarGradient(seed: string | null | undefined): string {
-  const gradients = [
-    'from-emerald-400 to-teal-600',
-    'from-amber-300 to-orange-500',
-    'from-sky-400 to-blue-600',
-    'from-rose-400 to-pink-600',
-    'from-teal-300 to-cyan-600',
-    'from-lime-400 to-emerald-600',
-    'from-orange-300 to-rose-500',
-    'from-slate-500 to-slate-800',
-  ];
-  let hash = 0;
-  for (const ch of seed ?? '') hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-  return gradients[hash % gradients.length];
-}
-
 export function titleCase(value: string | null | undefined): string {
   if (!value) return '';
   return value

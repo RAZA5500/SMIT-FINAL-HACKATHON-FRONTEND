@@ -14,7 +14,7 @@ import { Icons } from './icons';
   template: `
     @if (confirm.pending(); as req) {
       <div class="fixed inset-0 z-[80] grid place-items-center p-4">
-        <div @fade class="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" (click)="confirm.settle(false)"></div>
+        <div @fade class="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" (click)="confirm.settle(false)"></div>
         <div
           @modalPop
           cdkTrapFocus
@@ -22,15 +22,15 @@ import { Icons } from './icons';
           role="alertdialog"
           aria-modal="true"
           [attr.aria-label]="req.title"
-          class="relative w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+          class="relative w-full max-w-md rounded-2xl border border-slate-200/80 bg-white p-6 shadow-lift dark:border-white/10 dark:bg-slate-900"
         >
           <div class="flex gap-4">
-            <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl" [class]="iconChip()">
-              <lucide-icon [img]="icon()" [size]="22" [strokeWidth]="2.2" />
+            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-md ring-1 ring-inset" [class]="iconChip()">
+              <lucide-icon [img]="icon()" [size]="19" [strokeWidth]="2" />
             </span>
             <div class="min-w-0">
-              <h2 class="text-lg font-bold text-slate-900 dark:text-white">{{ req.title }}</h2>
-              <p class="mt-1.5 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{{ req.message }}</p>
+              <h2 class="text-base font-semibold text-slate-900 dark:text-white">{{ req.title }}</h2>
+              <p class="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{{ req.message }}</p>
             </div>
           </div>
           <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -65,13 +65,11 @@ export class ConfirmHostComponent {
   protected readonly iconChip = computed(() => {
     switch (this.confirm.pending()?.tone) {
       case 'danger':
-        return 'bg-rose-500/10 text-rose-600 dark:text-rose-400';
-      case 'navy':
-        return 'bg-slate-900/10 text-slate-800 dark:bg-white/10 dark:text-slate-100';
+        return 'bg-rose-50 text-rose-600 ring-rose-200 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-500/25';
       case 'warning':
-        return 'bg-amber-500/15 text-amber-600 dark:text-amber-400';
+        return 'bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/25';
       default:
-        return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+        return 'bg-slate-100 text-slate-600 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700';
     }
   });
 

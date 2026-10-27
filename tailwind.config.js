@@ -5,30 +5,46 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // HCM Lite colour system (brief cover)
-        brand: {
-          emerald: '#10B981', // present, check-in CTA, HR badge, success
-          teal: '#0D9488',
-          violet: '#7C3AED', // AI assistant, AI badges
-          purple: '#8B5CF6',
-          amber: '#F59E0B', // on leave, employee badge, attendance trend, pending
-          navy: '#0F172A', // admin badge, sidebar, dark surfaces
-          slate: '#1E293B',
-          blue: '#3B82F6', // late
-          rose: '#F43F5E', // absent, rejection, anomaly
+        // Neutral greys (slight cool bias) replace Tailwind's blue-tinted slate app-wide.
+        // 50 = page canvas, 200 = hairline borders, 500 = muted text (AA on white and canvas), 900/950 = ink.
+        slate: {
+          50: '#F7F7F8',
+          100: '#F0F0F2',
+          200: '#E4E5E8',
+          300: '#D0D2D7',
+          400: '#A0A3AB',
+          500: '#6B6E77',
+          600: '#53565E',
+          700: '#3B3D44',
+          800: '#26272C',
+          900: '#141519',
+          950: '#0B0C0F',
         },
+        // Brand = blue → indigo (the `emerald`/`teal` tone names map to these). Status: green = present/approved, blue = late,
+        // amber = leave/pending, rose = absent/rejected, violet = AI.
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        sans: ['Geist', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['"Geist Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      transitionTimingFunction: {
+        spring: 'cubic-bezier(0.22, 1, 0.36, 1)',
       },
       boxShadow: {
-        card: '0 1px 2px rgb(15 23 42 / 0.04), 0 12px 32px -18px rgb(15 23 42 / 0.18)',
-        lift: '0 2px 4px rgb(15 23 42 / 0.05), 0 22px 44px -22px rgb(15 23 42 / 0.32)',
-        'glow-violet': '0 0 0 1px rgb(139 92 246 / 0.35), 0 10px 40px -8px rgb(124 58 237 / 0.55)',
-        'glow-emerald': '0 10px 36px -10px rgb(16 185 129 / 0.6)',
-        'glow-amber': '0 10px 36px -10px rgb(245 158 11 / 0.55)',
-        'glow-rose': '0 10px 36px -10px rgb(244 63 94 / 0.5)',
+        xs: '0 1px 2px 0 rgb(15 16 20 / 0.05)',
+        card: '0 1px 2px 0 rgb(15 16 20 / 0.04), 0 4px 16px -6px rgb(15 16 20 / 0.07)',
+        lift: '0 18px 40px -12px rgb(15 16 20 / 0.2), 0 4px 10px -4px rgb(15 16 20 / 0.08)',
+        'glow-brand': '0 8px 24px -8px rgb(59 130 246 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.22)',
+        'glow-violet': '0 8px 24px -8px rgb(124 58 237 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.22)',
+        'glow-rose': '0 8px 24px -8px rgb(244 63 94 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.2)',
+      },
+      backgroundImage: {
+        'brand-gradient': 'linear-gradient(135deg, #3B82F6 0%, #4F46E5 100%)',
+        'ai-gradient': 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 55%, #6D28D9 100%)',
+        'grid-light':
+          'linear-gradient(to right, rgb(15 16 20 / 0.045) 1px, transparent 1px), linear-gradient(to bottom, rgb(15 16 20 / 0.045) 1px, transparent 1px)',
+        'grid-dark':
+          'linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px)',
       },
       keyframes: {
         shimmer: {
@@ -46,40 +62,29 @@ module.exports = {
         'radar-sweep': {
           to: { transform: 'rotate(360deg)' },
         },
-        'glow-pulse': {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgb(124 58 237 / 0.0), 0 8px 30px -10px rgb(124 58 237 / 0.55)' },
-          '50%': { boxShadow: '0 0 0 6px rgb(139 92 246 / 0.12), 0 12px 44px -8px rgb(124 58 237 / 0.75)' },
+        'bracket-breathe': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.55' },
+        },
+        'dot-bounce': {
+          '0%, 80%, 100%': { transform: 'translateY(0)', opacity: '0.5' },
+          '40%': { transform: 'translateY(-3px)', opacity: '1' },
+        },
+        'ping-soft': {
+          '75%, 100%': { transform: 'scale(1.9)', opacity: '0' },
+        },
+        aurora: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(4%, -6%) scale(1.08)' },
+          '66%': { transform: 'translate(-5%, 4%) scale(0.95)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-8px)' },
         },
         'gradient-x': {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-6px)' },
-        },
-        blob: {
-          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-          '33%': { transform: 'translate(30px, -40px) scale(1.08)' },
-          '66%': { transform: 'translate(-24px, 24px) scale(0.94)' },
-        },
-        wiggle: {
-          '0%, 100%': { transform: 'rotate(0deg)' },
-          '20%': { transform: 'rotate(-14deg)' },
-          '40%': { transform: 'rotate(10deg)' },
-          '60%': { transform: 'rotate(-6deg)' },
-          '80%': { transform: 'rotate(3deg)' },
-        },
-        'bracket-breathe': {
-          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
-          '50%': { opacity: '0.6', transform: 'scale(0.96)' },
-        },
-        'dot-bounce': {
-          '0%, 80%, 100%': { transform: 'translateY(0)', opacity: '0.5' },
-          '40%': { transform: 'translateY(-4px)', opacity: '1' },
-        },
-        'ping-soft': {
-          '75%, 100%': { transform: 'scale(1.9)', opacity: '0' },
         },
       },
       animation: {
@@ -87,14 +92,12 @@ module.exports = {
         'fade-in-up': 'fade-in-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both',
         'scan-line': 'scan-line 2.6s ease-in-out infinite',
         'radar-sweep': 'radar-sweep 3.2s linear infinite',
-        'glow-pulse': 'glow-pulse 2.6s ease-in-out infinite',
-        'gradient-x': 'gradient-x 6s ease infinite',
-        float: 'float 5s ease-in-out infinite',
-        blob: 'blob 18s ease-in-out infinite',
-        wiggle: 'wiggle 0.9s ease-in-out',
         'bracket-breathe': 'bracket-breathe 1.6s ease-in-out infinite',
         'dot-bounce': 'dot-bounce 1.2s ease-in-out infinite',
         'ping-soft': 'ping-soft 1.8s cubic-bezier(0, 0, 0.2, 1) infinite',
+        aurora: 'aurora 22s ease-in-out infinite',
+        float: 'float 6s ease-in-out infinite',
+        'gradient-x': 'gradient-x 8s ease infinite',
       },
     },
   },

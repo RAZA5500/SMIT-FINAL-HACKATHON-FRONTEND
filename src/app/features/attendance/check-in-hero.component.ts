@@ -17,99 +17,89 @@ import { ProgressRingComponent } from '../../shared/ui/progress';
   imports: [LucideAngularModule, StatusBadgeComponent, ProgressRingComponent, ClockPipe, HoursMinutesPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="relative overflow-hidden rounded-3xl bg-[#0B1222] p-6 text-white shadow-2xl shadow-slate-900/20 sm:p-8">
-      <div class="pointer-events-none absolute -left-20 -top-24 h-72 w-72 animate-blob rounded-full bg-emerald-500/25 blur-3xl"></div>
-      <div class="pointer-events-none absolute -bottom-24 right-0 h-72 w-72 animate-blob rounded-full bg-amber-400/15 blur-3xl [animation-delay:-8s]"></div>
-      <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.06)_1px,transparent_0)] [background-size:26px_26px]"></div>
-
-      <div class="relative grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
+    <section class="card p-6 sm:p-8">
+      <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
         <div>
           <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 ring-1 ring-white/15">
-              <lucide-icon [img]="icons.CalendarDays" [size]="13" /> {{ dateLabel() }}
-            </span>
-            <span class="inline-flex items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-400/30">
-              <lucide-icon [img]="icons.Clock" [size]="13" /> {{ shiftLabel() }}
-            </span>
+            <span class="badge bg-white text-slate-600 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700"><lucide-icon [img]="icons.CalendarDays" [size]="12" /> {{ dateLabel() }}</span>
+            <span class="badge bg-white text-slate-600 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700"><lucide-icon [img]="icons.Clock" [size]="12" /> {{ shiftLabel() }}</span>
             @if (store.today() && !store.today()!.isWorkingDay) {
-              <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold text-amber-200 ring-1 ring-amber-400/30">
-                <lucide-icon [img]="icons.PartyPopper" [size]="13" /> Non-working day
-              </span>
+              <span class="badge bg-amber-50 text-amber-800 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/25"><lucide-icon [img]="icons.PartyPopper" [size]="12" /> Non-working day</span>
             }
           </div>
 
-          <p class="mt-5 font-mono text-5xl font-bold tracking-tight sm:text-6xl">
+          <p class="num mt-5 text-5xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-6xl">
             {{ time().hm }}<span class="text-2xl text-slate-400 sm:text-3xl">:{{ time().s }}</span>
-            <span class="ml-2 text-lg font-semibold text-slate-400">{{ time().ampm }}</span>
+            <span class="ml-2 text-lg font-medium text-slate-400">{{ time().ampm }}</span>
           </p>
           <div class="mt-3 flex flex-wrap items-center gap-2">
             @if (store.record(); as r) {
               <app-status-badge [status]="r.status" size="md" />
               @if (r.lateMinutes > 0) {
-                <span class="text-sm text-blue-300">{{ r.lateMinutes }} min after office start</span>
+                <span class="text-sm text-blue-700 dark:text-blue-300">{{ r.lateMinutes }} min after office start</span>
               }
             } @else {
               <app-status-badge [status]="graceState().status" [label]="graceState().label" size="md" />
-              <span class="text-sm text-slate-400">{{ graceState().hint }}</span>
+              <span class="text-sm text-slate-500 dark:text-slate-400">{{ graceState().hint }}</span>
             }
           </div>
 
-          <div class="mt-7 flex flex-wrap gap-3">
+          <div class="mt-7 flex flex-wrap gap-2">
             @if (store.loading() && !store.today()) {
-              <div class="h-12 w-48 animate-pulse rounded-2xl bg-white/10"></div>
+              <div class="skeleton h-11 w-48"></div>
             } @else if (store.canCheckIn()) {
               <button type="button" class="btn btn-primary btn-lg" [disabled]="!!store.busy()" (click)="store.quickPunch('in')">
-                <lucide-icon [img]="store.busy() === 'in' ? icons.LoaderCircle : icons.LogIn" [size]="19" [class.animate-spin]="store.busy() === 'in'" /> Check in now
+                <lucide-icon [img]="store.busy() === 'in' ? icons.LoaderCircle : icons.LogIn" [size]="18" [class.animate-spin]="store.busy() === 'in'" /> Check in now
               </button>
-              <button type="button" class="btn btn-lg border border-white/20 bg-white/10 text-white backdrop-blur hover:bg-white/20" (click)="store.openCamera('in')">
-                <lucide-icon [img]="icons.ScanFace" [size]="19" /> Camera + GPS check-in
+              <button type="button" class="btn btn-secondary btn-lg" (click)="store.openCamera('in')">
+                <lucide-icon [img]="icons.ScanFace" [size]="18" /> Camera + GPS check-in
               </button>
             } @else if (store.canCheckOut()) {
-              <button type="button" class="btn btn-amber btn-lg" [disabled]="!!store.busy()" (click)="checkOut()">
-                <lucide-icon [img]="store.busy() === 'out' ? icons.LoaderCircle : icons.LogOut" [size]="19" [class.animate-spin]="store.busy() === 'out'" /> Check out
+              <button type="button" class="btn btn-navy btn-lg" [disabled]="!!store.busy()" (click)="checkOut()">
+                <lucide-icon [img]="store.busy() === 'out' ? icons.LoaderCircle : icons.LogOut" [size]="18" [class.animate-spin]="store.busy() === 'out'" /> Check out
               </button>
-              <button type="button" class="btn btn-lg border border-white/20 bg-white/10 text-white backdrop-blur hover:bg-white/20" (click)="store.openCamera('out')">
-                <lucide-icon [img]="icons.ScanFace" [size]="19" /> Camera check-out
+              <button type="button" class="btn btn-secondary btn-lg" (click)="store.openCamera('out')">
+                <lucide-icon [img]="icons.ScanFace" [size]="18" /> Camera check-out
               </button>
             } @else if (store.finishedForDay()) {
-              <div class="flex items-center gap-3 rounded-2xl bg-emerald-400/15 px-5 py-3 ring-1 ring-emerald-400/30">
-                <lucide-icon [img]="icons.CircleCheck" [size]="22" class="text-emerald-300" />
+              <div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/40">
+                <lucide-icon [img]="icons.CircleCheck" [size]="20" class="text-blue-600 dark:text-blue-400" />
                 <div>
-                  <p class="font-semibold">You're done for today</p>
-                  <p class="text-xs text-slate-300">Worked {{ store.record()?.workedMinutes | hm }} · see you tomorrow</p>
+                  <p class="text-sm font-medium text-slate-900 dark:text-white">You're done for today</p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Worked {{ store.record()?.workedMinutes | hm }} · see you tomorrow</p>
                 </div>
               </div>
             }
-            <button type="button" class="btn btn-lg text-slate-300 hover:bg-white/10 hover:text-white" (click)="store.openCorrection({ date: today() })">
-              <lucide-icon [img]="icons.Wrench" [size]="17" /> Request correction
+            <button type="button" class="btn btn-ghost btn-lg" (click)="store.openCorrection({ date: today() })">
+              <lucide-icon [img]="icons.Wrench" [size]="16" /> Request correction
             </button>
           </div>
         </div>
 
         <div class="mx-auto flex flex-col items-center">
-          <app-progress-ring [value]="progress()" [size]="210" [stroke]="15" [tone]="store.canCheckOut() ? 'emerald' : 'teal'" [marker]="halfDayMarker()">
+          <app-progress-ring [value]="progress()" [size]="200" [stroke]="12" [tone]="store.canCheckOut() ? 'emerald' : 'teal'" [marker]="halfDayMarker()">
             <div>
-              <p class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Worked</p>
-              <p class="mt-1 font-mono text-3xl font-bold">{{ workedLabel() }}</p>
-              <p class="mt-1 text-xs text-slate-400">of 8h day</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Worked</p>
+              <p class="num mt-1 text-3xl font-semibold text-slate-900 dark:text-white">{{ workedLabel() }}</p>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">of 8h day</p>
             </div>
           </app-progress-ring>
           <div class="mt-4 grid w-full grid-cols-2 gap-2 text-center text-xs">
-            <div class="rounded-2xl bg-white/5 px-3 py-2 ring-1 ring-white/10">
-              <p class="text-slate-400">In</p>
-              <p class="mt-0.5 font-semibold">{{ store.record()?.checkInAt | clock }}</p>
+            <div class="rounded-md border border-slate-200 px-3 py-2 dark:border-slate-800">
+              <p class="text-slate-500 dark:text-slate-400">In</p>
+              <p class="num mt-0.5 font-medium text-slate-900 dark:text-white">{{ store.record()?.checkInAt | clock }}</p>
             </div>
-            <div class="rounded-2xl bg-white/5 px-3 py-2 ring-1 ring-white/10">
-              <p class="text-slate-400">Out</p>
-              <p class="mt-0.5 font-semibold">{{ store.record()?.checkOutAt | clock }}</p>
+            <div class="rounded-md border border-slate-200 px-3 py-2 dark:border-slate-800">
+              <p class="text-slate-500 dark:text-slate-400">Out</p>
+              <p class="num mt-0.5 font-medium text-slate-900 dark:text-white">{{ store.record()?.checkOutAt | clock }}</p>
             </div>
           </div>
           @if (store.record()?.checkInVerification; as v) {
-            <p class="mt-3 flex items-center gap-1.5 text-xs text-emerald-300">
+            <p class="mt-3 flex items-center gap-1.5 text-xs text-blue-700 dark:text-blue-400">
               <lucide-icon [img]="icons.ScanFace" [size]="13" /> Camera verified · {{ meters(v.distanceMeters) }} from office
             </p>
           }
-          <p class="mt-2 text-[11px] text-slate-500">Tick marks the {{ halfDayHours() }}h half-day threshold</p>
+          <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Tick marks the {{ halfDayHours() }}h half-day threshold</p>
         </div>
       </div>
     </section>

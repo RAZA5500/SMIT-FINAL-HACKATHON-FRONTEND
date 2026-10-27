@@ -20,83 +20,83 @@ const PRESETS: { id: Preset; label: string }[] = [
   { id: 'custom', label: 'Custom' },
 ];
 
-/** Global filter ribbon (date range + department) with the glowing "✨ Summarize with AI" action. */
+/** Global filter toolbar (date range + department) with the "Summarize with AI" action and its insight card. */
 @Component({
   selector: 'app-filter-ribbon',
   imports: [FormsModule, LucideAngularModule, AiBadgeComponent],
   animations: [expand, fadeInUp, listStagger],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="card mb-6 p-3 sm:p-4">
-      <div class="flex flex-col gap-3 xl:flex-row xl:items-center">
-        <div class="flex min-w-0 items-center gap-2">
-          <span class="hidden h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-900/[0.05] text-slate-600 dark:bg-white/10 dark:text-slate-300 sm:grid">
-            <lucide-icon [img]="icons.CalendarDays" [size]="17" />
-          </span>
-          <div class="scroll-thin -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-0.5">
-            @for (p of presets; track p.id) {
-              <button type="button" class="pill" [class.pill-active]="preset() === p.id" (click)="choose(p.id)">
-                @if (preset() === p.id) {
-                  <lucide-icon [img]="icons.Check" [size]="13" [strokeWidth]="3" />
-                }
-                {{ p.label }}
-              </button>
-            }
-          </div>
-        </div>
-
-        <div class="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center xl:justify-end">
-          @if (preset() === 'custom') {
-            <div @fadeInUp class="flex items-center gap-2">
-              <input type="date" class="input py-2" [ngModel]="customStart()" (ngModelChange)="customStart.set($event); applyCustom()" [max]="customEnd() || today()" aria-label="Start date" />
-              <span class="text-slate-400">→</span>
-              <input type="date" class="input py-2" [ngModel]="customEnd()" (ngModelChange)="customEnd.set($event); applyCustom()" [min]="customStart()" [max]="today()" aria-label="End date" />
-            </div>
-          } @else {
-            <span class="hidden whitespace-nowrap text-xs font-medium text-slate-500 dark:text-slate-400 md:inline">{{ rangeLabel() }}</span>
+    <section class="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between" aria-label="Dashboard filters">
+      <div class="no-scrollbar -mx-1 overflow-x-auto px-1">
+        <div class="inline-flex rounded-md border border-slate-200 bg-white p-0.5 shadow-xs dark:border-slate-700 dark:bg-slate-900" role="group" aria-label="Date range">
+          @for (p of presets; track p.id) {
+            <button
+              type="button"
+              class="whitespace-nowrap rounded px-2.5 py-1 text-[13px] font-medium outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-blue-600/40"
+              [class]="preset() === p.id ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'"
+              [attr.aria-pressed]="preset() === p.id"
+              (click)="choose(p.id)"
+            >
+              {{ p.label }}
+            </button>
           }
-          <select class="input py-2 sm:w-52" [ngModel]="departmentId()" (ngModelChange)="departmentId.set($event); emit()" aria-label="Department filter">
-            <option value="">All departments</option>
-            @for (d of departments(); track d.id) {
-              <option [value]="d.id">{{ d.name }}</option>
-            }
-          </select>
-          <button type="button" class="btn btn-ai animate-glow-pulse shrink-0" (click)="summarize()" [disabled]="summarizing()">
-            <lucide-icon [img]="summarizing() ? icons.LoaderCircle : icons.Sparkles" [size]="16" [class.animate-spin]="summarizing()" />
-            {{ summarizing() ? 'Summarizing…' : '✨ Summarize with AI' }}
-          </button>
         </div>
       </div>
 
-      @if (summarizing() || summary()) {
-        <div @expand>
-          <div class="mt-4 rounded-2xl border border-violet-200/80 bg-gradient-to-br from-violet-50 via-white to-purple-50 p-4 dark:border-violet-500/25 dark:from-violet-500/10 dark:via-slate-900 dark:to-purple-500/5 sm:p-5">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <p class="flex items-center gap-2 text-sm font-bold text-violet-800 dark:text-violet-200">
-                <lucide-icon [img]="icons.WandSparkles" [size]="16" /> AI insights · {{ rangeLabel() }}
-              </p>
-              <div class="flex items-center gap-2">
-                <app-ai-badge />
-                @if (summary() && !summarizing()) {
-                  <button type="button" class="rounded-lg p-1.5 text-violet-400 transition hover:bg-violet-100 hover:text-violet-700 dark:hover:bg-violet-500/20" (click)="summary.set(null)" aria-label="Dismiss AI summary">
-                    <lucide-icon [img]="icons.X" [size]="15" />
-                  </button>
-                }
-              </div>
+      <div class="flex flex-wrap items-center gap-2">
+        @if (preset() === 'custom') {
+          <div @fadeInUp class="flex items-center gap-2">
+            <input type="date" class="input w-auto" [ngModel]="customStart()" (ngModelChange)="customStart.set($event); applyCustom()" [max]="customEnd() || today()" aria-label="Start date" />
+            <span class="text-slate-400" aria-hidden="true">–</span>
+            <input type="date" class="input w-auto" [ngModel]="customEnd()" (ngModelChange)="customEnd.set($event); applyCustom()" [min]="customStart()" [max]="today()" aria-label="End date" />
+          </div>
+        } @else {
+          <span class="num hidden whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 xl:inline">{{ rangeLabel() }}</span>
+        }
+        <select class="input w-auto min-w-44" [ngModel]="departmentId()" (ngModelChange)="departmentId.set($event); emit()" aria-label="Department filter">
+          <option value="">All departments</option>
+          @for (d of departments(); track d.id) {
+            <option [value]="d.id">{{ d.name }}</option>
+          }
+        </select>
+        <button type="button" class="btn btn-ai shrink-0" (click)="summarize()" [disabled]="summarizing()">
+          <lucide-icon [img]="summarizing() ? icons.LoaderCircle : icons.Sparkles" [size]="15" [class.animate-spin]="summarizing()" />
+          {{ summarizing() ? 'Summarizing…' : 'Summarize with AI' }}
+        </button>
+      </div>
+    </section>
+
+    @if (summarizing() || summary()) {
+      <div @expand>
+        <section class="card mb-6 p-4 sm:p-5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white">
+              <lucide-icon [img]="icons.Sparkles" [size]="15" class="text-violet-600 dark:text-violet-300" /> AI insights
+              <span class="num font-normal text-slate-500 dark:text-slate-400">· {{ rangeLabel() }}</span>
+            </p>
+            <div class="flex items-center gap-1.5">
+              <app-ai-badge />
+              @if (summary() && !summarizing()) {
+                <button type="button" class="btn btn-ghost btn-icon p-1.5" (click)="summary.set(null)" aria-label="Dismiss AI summary">
+                  <lucide-icon [img]="icons.X" [size]="15" />
+                </button>
+              }
             </div>
-            @if (summarizing()) {
-              <div class="mt-3 space-y-2.5">
-                @for (w of [92, 78, 85, 64]; track $index) {
-                  <div class="ai-shimmer h-4 rounded-full" [style.width.%]="w"></div>
-                }
-              </div>
-            } @else {
-              @if (summary(); as s) {
+          </div>
+          @if (summarizing()) {
+            <div class="mt-3 space-y-2.5">
+              @for (w of [92, 78, 85, 64]; track $index) {
+                <div class="ai-shimmer h-4 rounded" [style.width.%]="w"></div>
+              }
+            </div>
+          } @else {
+            @if (summary(); as s) {
               @if (s.bullets.length) {
-                <ul class="mt-3 space-y-2.5" [@listStagger]="s.bullets.length">
+                <ul class="mt-3 space-y-2" [@listStagger]="s.bullets.length">
                   @for (b of s.bullets; track $index) {
                     <li class="flex gap-2.5 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-                      <span class="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-violet-500/15 text-violet-600 dark:text-violet-300"><lucide-icon [img]="icons.Sparkles" [size]="11" /></span>
+                      <span class="mt-[0.55rem] h-1.5 w-1.5 shrink-0 rounded-full bg-violet-500"></span>
                       <span>{{ b }}</span>
                     </li>
                   }
@@ -104,11 +104,11 @@ const PRESETS: { id: Preset; label: string }[] = [
               } @else {
                 <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">{{ s.message || 'No insights could be generated for this selection.' }}</p>
               }
-              <p class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400">
+              <p class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
                 @if (s.fallback) {
                   <span class="inline-flex items-center gap-1 text-amber-700 dark:text-amber-300"><lucide-icon [img]="icons.Info" [size]="12" /> AI model unavailable — insights generated from rules over the live KPIs.</span>
                 } @else if (s.grounded) {
-                  <span class="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-300"><lucide-icon [img]="icons.ShieldCheck" [size]="12" /> Every number verified against the live KPI data.</span>
+                  <span class="inline-flex items-center gap-1 text-blue-700 dark:text-blue-300"><lucide-icon [img]="icons.ShieldCheck" [size]="12" /> Every number verified against the live KPI data.</span>
                 }
                 @if (s.model) {
                   <span>{{ s.model }}</span>
@@ -117,12 +117,11 @@ const PRESETS: { id: Preset; label: string }[] = [
                   <span>{{ (s.latencyMs / 1000).toFixed(1) }}s</span>
                 }
               </p>
-              }
             }
-          </div>
-        </div>
-      }
-    </section>
+          }
+        </section>
+      </div>
+    }
   `,
 })
 export class FilterRibbonComponent implements OnInit {

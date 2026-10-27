@@ -3,35 +3,38 @@ import { LucideAngularModule, LucideIconData } from 'lucide-angular';
 import { PolicyStore } from '../../core/services/policy.store';
 import { formatMoney, formatNumber } from '../../core/utils/format';
 import { CountUpDirective } from './count-up.directive';
-import { TONE_CHIP, TONE_GLOW, Tone } from './tone';
+import { TONE_CHIP, TONE_DOT, TONE_GLOW, Tone } from './tone';
 
 export type KpiFormat = 'number' | 'percent' | 'money' | 'hours' | 'days';
 
-/** Stat tile: label · animated value · optional hint. */
+/** Stat tile: label · tinted icon tile · animated value · hint (status dot for semantic tones); glows in its tone on hover. */
 @Component({
   selector: 'app-kpi-card',
   imports: [LucideAngularModule, CountUpDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="card card-hover group relative h-full overflow-hidden p-5">
-      <div class="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-70" [class]="glow()"></div>
+      <span aria-hidden="true" class="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100" [class]="glow()"></span>
       <div class="relative flex items-start justify-between gap-3">
-        <div class="min-w-0">
-          <p class="truncate text-[13px] font-medium text-slate-500 dark:text-slate-400">{{ label() }}</p>
-          @if (loading()) {
-            <div class="skeleton mt-3 h-8 w-24"></div>
-          } @else {
-            <p class="mt-2 text-[1.85rem] font-extrabold leading-none tracking-tight text-slate-900 dark:text-white">
-              <span [appCountUp]="value()" [countFormat]="formatter()"></span>
-            </p>
-          }
-        </div>
-        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl ring-1 ring-inset transition-transform duration-300 group-hover:scale-110" [class]="chip()">
-          <lucide-icon [img]="icon()" [size]="20" [strokeWidth]="2.2" />
+        <p class="min-w-0 flex-1 truncate pt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400">{{ label() }}</p>
+        <span class="icon-tile h-9 w-9 group-hover:-rotate-6 group-hover:scale-110" [class]="chip()">
+          <lucide-icon [img]="icon()" [size]="17" [strokeWidth]="2" />
         </span>
       </div>
+      @if (loading()) {
+        <div class="skeleton relative mt-2 h-8 w-24"></div>
+      } @else {
+        <p class="num relative mt-1 text-[1.875rem] font-semibold leading-none tracking-tight text-slate-900 dark:text-white">
+          <span [appCountUp]="value()" [countFormat]="formatter()"></span>
+        </p>
+      }
       @if (hint() && !loading()) {
-        <p class="relative mt-3 truncate text-xs text-slate-500 dark:text-slate-400" [title]="hint()">{{ hint() }}</p>
+        <p class="relative mt-2.5 flex items-center gap-1.5 truncate text-xs text-slate-500 dark:text-slate-400" [title]="hint()">
+          @if (dot(); as d) {
+            <span class="h-1.5 w-1.5 shrink-0 rounded-full" [class]="d"></span>
+          }
+          <span class="truncate">{{ hint() }}</span>
+        </p>
       }
       <ng-content />
     </div>
@@ -48,6 +51,8 @@ export class KpiCardComponent {
   readonly hint = input<string>('');
   readonly loading = input(false);
 
+  /** Neutral metrics (navy/slate) carry no dot. */
+  protected readonly dot = computed(() => (this.tone() === 'navy' || this.tone() === 'slate' ? null : TONE_DOT[this.tone()]));
   protected readonly chip = computed(() => TONE_CHIP[this.tone()]);
   protected readonly glow = computed(() => TONE_GLOW[this.tone()]);
   protected readonly formatter = computed<(n: number) => string>(() => {

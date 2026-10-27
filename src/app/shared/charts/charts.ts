@@ -37,7 +37,7 @@ export class BarChartComponent {
 
   readonly labels = input<string[]>([]);
   readonly values = input<number[]>([]);
-  readonly series = input<SeriesName>('teal');
+  readonly series = input<SeriesName>('ink');
   /** Per-bar colours (ordinal ramps); overrides `series`. */
   readonly colors = input<string[] | null>(null);
   readonly horizontal = input(false);
@@ -59,9 +59,9 @@ export class BarChartComponent {
       datasets: [
         {
           data: this.values(),
-          backgroundColor: colors ?? gradientFill<'bar'>(color, 0.5, 1, this.horizontal()),
+          backgroundColor: colors ?? gradientFill<'bar'>(color, 0.55, 1, this.horizontal()),
           hoverBackgroundColor: colors ?? color,
-          borderRadius: 4,
+          borderRadius: 6,
           borderSkipped: 'start',
           maxBarThickness: 24,
           categoryPercentage: 0.72,
@@ -86,7 +86,7 @@ export class BarChartComponent {
   );
 }
 
-/** Single-series trend line with a soft gradient wash, ringed markers and a snapping crosshair. */
+/** Single-series trend line with a faint area wash, ringed markers and a snapping crosshair. */
 @Component({
   selector: 'app-line-chart',
   imports: [BaseChartDirective],
@@ -104,7 +104,7 @@ export class LineChartComponent {
 
   readonly labels = input<string[]>([]);
   readonly values = input<number[]>([]);
-  readonly series = input<SeriesName>('amber');
+  readonly series = input<SeriesName>('emerald');
   readonly format = input<(value: number) => string>(defaultFormat);
   readonly axisFormat = input<((value: number) => string) | undefined>(undefined);
   readonly footer = input<((index: number) => string[]) | undefined>(undefined);
@@ -127,11 +127,11 @@ export class LineChartComponent {
           borderWidth: 2,
           borderCapStyle: 'round',
           borderJoinStyle: 'round',
-          tension: 0.35,
+          tension: 0.3,
           fill: true,
-          backgroundColor: gradientFill<'line'>(color, 0, 0.22),
-          pointRadius: dense ? 0 : 4,
-          pointHoverRadius: 6,
+          backgroundColor: gradientFill<'line'>(color, 0, 0.12),
+          pointRadius: dense ? 0 : 3,
+          pointHoverRadius: 5,
           pointBackgroundColor: color,
           pointBorderColor: palette.surface,
           pointBorderWidth: 2,

@@ -30,16 +30,14 @@ const TENURE_LABELS: Record<string, string> = { '<6m': '< 6 months', '6-12m': '6
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" [@listStagger]="4">
       <app-kpi-card label="Headcount" [value]="s()?.headcount?.total" [icon]="icons.Users" tone="navy" [hint]="headcountHint()" [loading]="loading()" />
       <app-kpi-card label="Attrition YTD" format="percent" [value]="s()?.attritionYtd?.attritionRate" [icon]="icons.TrendingDown" tone="rose" [hint]="attritionHint()" [loading]="loading()" />
-      <app-kpi-card label="Payroll cost" format="money" [value]="s()?.payrollCost?.totals?.gross" [icon]="icons.Banknote" tone="emerald" [hint]="payrollHint()" [loading]="loading()" />
-      <app-kpi-card label="Average salary" format="money" [value]="averageSalary()" [icon]="icons.Wallet" tone="amber" [hint]="averageHint()" [loading]="loading()" />
+      <app-kpi-card label="Payroll cost" format="money" [value]="s()?.payrollCost?.totals?.gross" [icon]="icons.Banknote" tone="teal" [hint]="payrollHint()" [loading]="loading()" />
+      <app-kpi-card label="Average salary" format="money" [value]="averageSalary()" [icon]="icons.Wallet" tone="teal" [hint]="averageHint()" [loading]="loading()" />
     </div>
 
     <div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
       <app-chart-card
         title="Headcount by department"
         subtitle="Active + probation on the end date"
-        [icon]="icons.Network"
-        tone="teal"
         [loading]="loading()"
         [refreshing]="refreshing()"
         [empty]="headcountDept().labels.length === 0"
@@ -49,14 +47,12 @@ const TENURE_LABELS: Record<string, string> = { '<6m': '< 6 months', '6-12m': '6
         [table]="headcountTable()"
         [height]="chartHeight(headcountDept().labels.length)"
       >
-        <app-bar-chart [horizontal]="true" series="teal" [labels]="headcountDept().labels" [values]="headcountDept().values" ariaLabel="Headcount by department" />
+        <app-bar-chart [horizontal]="true" series="ink" [labels]="headcountDept().labels" [values]="headcountDept().values" ariaLabel="Headcount by department" />
       </app-chart-card>
 
       <app-chart-card
         title="Payroll cost by department"
         [subtitle]="payrollSubtitle()"
-        [icon]="icons.Banknote"
-        tone="emerald"
         [loading]="loading()"
         [refreshing]="refreshing()"
         [empty]="payrollDept().labels.length === 0"
@@ -66,14 +62,12 @@ const TENURE_LABELS: Record<string, string> = { '<6m': '< 6 months', '6-12m': '6
         [table]="payrollTable()"
         [height]="chartHeight(payrollDept().labels.length)"
       >
-        <app-bar-chart [horizontal]="true" series="emerald" [labels]="payrollDept().labels" [values]="payrollDept().values" [format]="moneyCompact" ariaLabel="Payroll cost by department" />
+        <app-bar-chart [horizontal]="true" series="ink" [labels]="payrollDept().labels" [values]="payrollDept().values" [format]="moneyCompact" ariaLabel="Payroll cost by department" />
       </app-chart-card>
 
       <app-chart-card
         title="Gender mix"
         subtitle="Headcount by gender"
-        [icon]="icons.Users"
-        tone="teal"
         [loading]="loading()"
         [refreshing]="refreshing()"
         [empty]="genderTotal() === 0"
@@ -82,14 +76,12 @@ const TENURE_LABELS: Record<string, string> = { '<6m': '< 6 months', '6-12m': '6
         [table]="genderTable()"
         [height]="210"
       >
-        <app-bar-chart [horizontal]="true" series="teal" [labels]="gender().labels" [values]="gender().values" [footer]="genderFooter" ariaLabel="Gender mix" />
+        <app-bar-chart [horizontal]="true" series="ink" [labels]="gender().labels" [values]="gender().values" [footer]="genderFooter" ariaLabel="Gender mix" />
       </app-chart-card>
 
       <app-chart-card
         title="Tenure bands"
         subtitle="Longer tenure = deeper shade"
-        [icon]="icons.Award"
-        tone="teal"
         [loading]="loading()"
         [refreshing]="refreshing()"
         [empty]="genderTotal() === 0"

@@ -69,7 +69,7 @@ const FRIENDLY: Record<string, string> = {
       <div class="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <!-- Camera viewport -->
         <div>
-          <div class="relative aspect-[4/3] overflow-hidden rounded-3xl bg-slate-950 shadow-inner">
+          <div class="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-950 shadow-inner">
             <video
               #videoElement
               class="h-full w-full -scale-x-100 object-cover transition-opacity duration-500"
@@ -83,23 +83,23 @@ const FRIENDLY: Record<string, string> = {
             @if (cameraState() === 'live') {
               <!-- animated scanning brackets -->
               <div class="pointer-events-none absolute inset-[12%] animate-bracket-breathe">
-                <span class="absolute left-0 top-0 h-10 w-10 rounded-tl-2xl border-l-4 border-t-4 transition-colors duration-300" [class]="bracketColor()"></span>
-                <span class="absolute right-0 top-0 h-10 w-10 rounded-tr-2xl border-r-4 border-t-4 transition-colors duration-300" [class]="bracketColor()"></span>
-                <span class="absolute bottom-0 left-0 h-10 w-10 rounded-bl-2xl border-b-4 border-l-4 transition-colors duration-300" [class]="bracketColor()"></span>
-                <span class="absolute bottom-0 right-0 h-10 w-10 rounded-br-2xl border-b-4 border-r-4 transition-colors duration-300" [class]="bracketColor()"></span>
+                <span class="absolute left-0 top-0 h-10 w-10 rounded-tl-lg border-l-4 border-t-4 transition-colors duration-300" [class]="bracketColor()"></span>
+                <span class="absolute right-0 top-0 h-10 w-10 rounded-tr-lg border-r-4 border-t-4 transition-colors duration-300" [class]="bracketColor()"></span>
+                <span class="absolute bottom-0 left-0 h-10 w-10 rounded-bl-lg border-b-4 border-l-4 transition-colors duration-300" [class]="bracketColor()"></span>
+                <span class="absolute bottom-0 right-0 h-10 w-10 rounded-br-lg border-b-4 border-r-4 transition-colors duration-300" [class]="bracketColor()"></span>
                 @if (!faceOk()) {
-                  <span class="absolute inset-x-2 h-0.5 animate-scan-line rounded-full bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_12px_2px_rgba(245,158,11,0.6)]"></span>
+                  <span class="absolute inset-x-2 h-0.5 animate-scan-line rounded-full bg-gradient-to-r from-transparent via-amber-400 to-transparent"></span>
                 }
               </div>
               <div class="absolute inset-x-0 top-3 flex justify-center">
-                <span class="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur-md" [class]="faceChipClass()">
+                <span class="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm backdrop-blur-md" [class]="faceChipClass()">
                   <lucide-icon [img]="faceOk() ? icons.CircleCheck : faceCount() && faceCount()! > 1 ? icons.Users : icons.ScanFace" [size]="14" />
                   {{ faceMessage() }}
                 </span>
               </div>
               @if (livenessEnabled() && faceOk()) {
                 <div @fadeInUp class="absolute inset-x-0 bottom-3 flex justify-center">
-                  <span class="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-lg backdrop-blur-md" [class]="blinkDetected() ? 'bg-emerald-500/90 text-white' : 'bg-white/90 text-slate-800'">
+                  <span class="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-sm backdrop-blur-md" [class]="blinkDetected() ? 'bg-blue-500/90 text-white' : 'bg-white/90 text-slate-800'">
                     <lucide-icon [img]="blinkDetected() ? icons.ShieldCheck : icons.Eye" [size]="14" />
                     {{ blinkDetected() ? 'Liveness confirmed' : 'Blink once to confirm you are live' }}
                   </span>
@@ -126,7 +126,7 @@ const FRIENDLY: Record<string, string> = {
                   }
                   @default {
                     <div>
-                      <lucide-icon [img]="icons.LoaderCircle" [size]="36" class="mx-auto animate-spin text-emerald-400" />
+                      <lucide-icon [img]="icons.LoaderCircle" [size]="36" class="mx-auto animate-spin text-blue-400" />
                       <p class="mt-3 text-sm">Starting camera…</p>
                     </div>
                   }
@@ -140,7 +140,7 @@ const FRIENDLY: Record<string, string> = {
             }
           </div>
 
-          <label class="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
+          <label class="mt-3 flex items-center justify-between gap-3 rounded-lg border border-slate-200 px-4 py-3 dark:border-slate-800">
             <span class="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
               <lucide-icon [img]="icons.Eye" [size]="16" class="text-violet-500" /> Blink liveness check
               <span class="text-xs font-normal text-slate-400">(optional)</span>
@@ -148,8 +148,8 @@ const FRIENDLY: Record<string, string> = {
             <input type="checkbox" class="switch" [checked]="livenessEnabled()" (change)="toggleLiveness()" />
           </label>
 
-          <div class="mt-3 flex gap-3 rounded-2xl border border-emerald-200/70 bg-emerald-50/70 p-3.5 text-xs leading-relaxed text-emerald-900 dark:border-emerald-500/20 dark:bg-emerald-500/5 dark:text-emerald-200">
-            <lucide-icon [img]="icons.ShieldCheck" [size]="18" class="mt-0.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <div class="mt-3 flex gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3.5 text-xs leading-relaxed text-slate-600 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-300">
+            <lucide-icon [img]="icons.ShieldCheck" [size]="16" class="mt-0.5 shrink-0 text-blue-600 dark:text-blue-400" />
             <p>
               <strong>Privacy:</strong> face detection runs entirely in your browser. No photo or video is stored or uploaded — only the face count
               and your GPS fix are sent to the server, which stores just the verification result (distance &amp; accuracy).
@@ -159,38 +159,38 @@ const FRIENDLY: Record<string, string> = {
 
         <!-- Geofence & checks -->
         <div class="flex flex-col gap-4">
-          <div class="flex flex-col items-center rounded-3xl border border-slate-200 p-4 dark:border-slate-800">
+          <div class="flex flex-col items-center rounded-lg border border-slate-200 p-4 dark:border-slate-800">
             <div class="flex w-full items-center justify-between">
-              <p class="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100"><lucide-icon [img]="icons.Radar" [size]="16" class="text-amber-500" /> Geofence radar</p>
+              <p class="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100"><lucide-icon [img]="icons.Radar" [size]="16" class="text-slate-400" /> Geofence radar</p>
               <span class="text-xs text-slate-500 dark:text-slate-400">radius {{ meters(radius()) }}</span>
             </div>
             <div class="mt-2 w-full max-w-[200px]">
               <app-geo-radar [radiusMeters]="radius()" [distanceMeters]="distance()" [state]="radarState()" />
             </div>
             <div class="mt-3 grid w-full grid-cols-2 gap-2 text-center">
-              <div class="rounded-xl bg-slate-50 py-2 dark:bg-slate-800/60">
+              <div class="rounded-md bg-slate-50 py-2 dark:bg-slate-800/60">
                 <p class="text-[11px] text-slate-500 dark:text-slate-400">Distance</p>
-                <p class="text-sm font-bold" [class]="distanceClass()">{{ distance() !== null ? meters(distance()) : 'Server-verified' }}</p>
+                <p class="text-sm font-semibold" [class]="distanceClass()">{{ distance() !== null ? meters(distance()) : 'Server-verified' }}</p>
               </div>
-              <div class="rounded-xl bg-slate-50 py-2 dark:bg-slate-800/60">
+              <div class="rounded-md bg-slate-50 py-2 dark:bg-slate-800/60">
                 <p class="text-[11px] text-slate-500 dark:text-slate-400">GPS accuracy</p>
-                <p class="text-sm font-bold" [class]="fix() ? (accuracyOk() ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400') : 'text-slate-400'">
+                <p class="text-sm font-semibold" [class]="fix() ? (accuracyOk() ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-400') : 'text-slate-400'">
                   {{ fix() ? '±' + fix()!.accuracy + ' m' : '…' }}
                 </p>
               </div>
             </div>
             @if (geoError()) {
-              <p class="mt-3 w-full rounded-xl bg-rose-50 p-2.5 text-xs text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">{{ geoError() }}</p>
+              <p class="mt-3 w-full rounded-lg bg-rose-50 p-2.5 text-xs text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">{{ geoError() }}</p>
             }
           </div>
 
           <ul class="space-y-2">
             @for (check of checks(); track check.label) {
-              <li class="flex items-center gap-3 rounded-2xl border px-3.5 py-2.5 text-sm transition-colors" [class]="check.ok === true ? 'border-emerald-200 bg-emerald-50/60 dark:border-emerald-500/20 dark:bg-emerald-500/5' : check.ok === false ? 'border-rose-200 bg-rose-50/60 dark:border-rose-500/20 dark:bg-rose-500/5' : 'border-slate-200 dark:border-slate-800'">
+              <li class="flex items-center gap-3 rounded-lg border px-3.5 py-2.5 text-sm transition-colors" [class]="check.ok === false ? 'border-rose-200 bg-rose-50/60 dark:border-rose-500/20 dark:bg-rose-500/5' : 'border-slate-200 dark:border-slate-800'">
                 <lucide-icon
                   [img]="check.ok === true ? icons.CircleCheck : check.ok === false ? icons.CircleX : icons.CircleDashed"
                   [size]="18"
-                  [class]="check.ok === true ? 'text-emerald-500' : check.ok === false ? 'text-rose-500' : 'text-slate-400 animate-pulse'"
+                  [class]="check.ok === true ? 'text-blue-600 dark:text-blue-400' : check.ok === false ? 'text-rose-500' : 'text-slate-400 animate-pulse'"
                 />
                 <span class="min-w-0 flex-1">
                   <span class="block font-medium text-slate-800 dark:text-slate-100">{{ check.label }}</span>
@@ -201,7 +201,7 @@ const FRIENDLY: Record<string, string> = {
           </ul>
 
           @if (rejection(); as r) {
-            <div @fadeInUp class="flex gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+            <div @fadeInUp class="flex gap-3 rounded-lg border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
               <lucide-icon [img]="icons.TriangleAlert" [size]="18" class="mt-0.5 shrink-0" />
               <div>
                 <p class="font-semibold">{{ r.code ? friendly(r.code) : 'Check-in rejected' }}</p>
@@ -210,15 +210,15 @@ const FRIENDLY: Record<string, string> = {
             </div>
           }
           @if (success()) {
-            <div @fadeInUp class="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 p-4 text-white shadow-glow-emerald">
-              <lucide-icon [img]="icons.CircleCheck" [size]="24" />
-              <p class="font-semibold">{{ mode() === 'out' ? 'Checked out' : 'Checked in' }} — verified by camera &amp; GPS.</p>
+            <div @fadeInUp class="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-900 dark:border-blue-500/25 dark:bg-blue-500/10 dark:text-blue-200">
+              <lucide-icon [img]="icons.CircleCheck" [size]="20" class="text-blue-600 dark:text-blue-400" />
+              <p class="text-sm font-medium">{{ mode() === 'out' ? 'Checked out' : 'Checked in' }} — verified by camera &amp; GPS.</p>
             </div>
           }
         </div>
       </div>
 
-      <div modal-footer class="flex flex-col-reverse gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <div modal-footer class="flex flex-col-reverse gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <button type="button" class="btn btn-ghost text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10" (click)="requestCorrection()" [disabled]="submitting()">
           <lucide-icon [img]="icons.Wrench" [size]="16" /> Failed? Request HR correction
         </button>
@@ -322,14 +322,14 @@ export class CameraCheckinComponent {
 
   protected readonly faceChipClass = computed(() => {
     const count = this.faceCount();
-    if (count === 1) return 'bg-emerald-500/90';
+    if (count === 1) return 'bg-blue-500/90';
     if (count !== null && count > 1) return 'bg-rose-500/90';
     return 'bg-amber-500/90';
   });
 
   protected readonly bracketColor = computed(() => {
     const count = this.faceCount();
-    if (count === 1) return 'border-emerald-400';
+    if (count === 1) return 'border-blue-400';
     if (count !== null && count > 1) return 'border-rose-500';
     return 'border-amber-400';
   });
@@ -337,7 +337,7 @@ export class CameraCheckinComponent {
   protected readonly distanceClass = computed(() => {
     const inside = this.inside();
     if (inside === null) return 'text-slate-500 dark:text-slate-400 text-xs';
-    return inside ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+    return inside ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-400';
   });
 
   protected readonly checks = computed(() => {
@@ -576,7 +576,7 @@ export class CameraCheckinComponent {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const color = scan.count === 1 ? '#34d399' : '#fb7185';
+    const color = scan.count === 1 ? '#60A5FA' : '#fb7185';
     for (const box of scan.boxes) {
       ctx.strokeStyle = color;
       ctx.lineWidth = 3;

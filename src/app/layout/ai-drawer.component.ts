@@ -43,46 +43,45 @@ const TOOL_LABELS: Record<string, string> = {
   template: `
     @if (store.open()) {
       <div class="fixed inset-0 z-[70]">
-        <div @fade class="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]" (click)="store.close()"></div>
+        <div @fade class="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" (click)="store.close()"></div>
         <aside
           @slideOver
           cdkTrapFocus
           role="dialog"
           aria-modal="true"
           aria-label="HCM AI assistant"
-          class="absolute inset-y-0 right-0 flex w-full max-w-[440px] flex-col border-l border-violet-200/60 bg-white shadow-2xl shadow-violet-900/20 dark:border-violet-500/20 dark:bg-slate-950"
+          class="absolute inset-y-0 right-0 flex w-full max-w-[440px] flex-col border-l border-slate-200 bg-white shadow-lift dark:border-slate-800 dark:bg-slate-950"
         >
           <!-- Header -->
-          <header class="relative overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-violet-800 px-5 pb-5 pt-4 text-white">
-            <div class="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
-            <div class="relative flex items-start justify-between gap-3">
+          <header class="border-b border-slate-200 bg-gradient-to-br from-violet-50 via-white to-blue-50/60 px-5 py-4 dark:border-slate-800 dark:from-violet-500/10 dark:via-slate-950 dark:to-blue-500/5">
+            <div class="flex items-start justify-between gap-3">
               <div class="flex items-center gap-3">
-                <span class="grid h-11 w-11 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/25 backdrop-blur">
-                  <lucide-icon [img]="icons.Bot" [size]="22" />
+                <span class="grid h-10 w-10 place-items-center rounded-xl bg-ai-gradient text-white shadow-glow-violet">
+                  <lucide-icon [img]="icons.Sparkles" [size]="18" />
                 </span>
                 <div>
-                  <p class="font-bold leading-tight">HCM Assistant</p>
-                  <p class="flex items-center gap-1.5 text-xs text-violet-100"><lucide-icon [img]="icons.Languages" [size]="12" /> English · Roman Urdu</p>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-white">HCM Assistant</p>
+                  <p class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400"><lucide-icon [img]="icons.Languages" [size]="12" /> English · Roman Urdu</p>
                 </div>
               </div>
-              <div class="flex items-center gap-1">
-                <button type="button" class="rounded-xl p-2 text-violet-100 transition hover:bg-white/10 hover:text-white disabled:opacity-40" [disabled]="store.messages().length === 0" (click)="store.clear()" title="Clear conversation" aria-label="Clear conversation">
-                  <lucide-icon [img]="icons.RotateCcw" [size]="17" />
+              <div class="flex items-center gap-0.5">
+                <button type="button" class="btn btn-ghost btn-icon" [disabled]="store.messages().length === 0" (click)="store.clear()" title="Clear conversation" aria-label="Clear conversation">
+                  <lucide-icon [img]="icons.RotateCcw" [size]="16" />
                 </button>
-                <button type="button" class="rounded-xl p-2 text-violet-100 transition hover:bg-white/10 hover:text-white" (click)="store.close()" aria-label="Close assistant">
+                <button type="button" class="btn btn-ghost btn-icon" (click)="store.close()" aria-label="Close assistant">
                   <lucide-icon [img]="icons.X" [size]="18" />
                 </button>
               </div>
             </div>
-            <p class="relative mt-3 text-xs leading-relaxed text-violet-100/90">Answers use live HR data you are allowed to see — {{ scopeText() }}</p>
+            <p class="mt-3 text-xs leading-relaxed text-slate-500 dark:text-slate-400">Answers use live HR data you are allowed to see — {{ scopeText() }}</p>
           </header>
 
           <!-- Messages -->
-          <div #scroller class="scroll-thin flex-1 space-y-4 overflow-y-auto bg-gradient-to-b from-violet-50/60 to-white px-4 py-5 dark:from-violet-950/20 dark:to-slate-950">
+          <div #scroller class="scroll-thin flex-1 space-y-4 overflow-y-auto bg-slate-50 px-4 py-5 dark:bg-slate-950">
             @if (store.messages().length === 0) {
               <div @fadeInUp class="pt-4 text-center">
-                <span class="mx-auto grid h-14 w-14 animate-float place-items-center rounded-3xl bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-glow-violet">
-                  <lucide-icon [img]="icons.Sparkles" [size]="26" />
+                <span class="mx-auto grid h-14 w-14 animate-float place-items-center rounded-2xl bg-ai-gradient text-white shadow-glow-violet">
+                  <lucide-icon [img]="icons.Sparkles" [size]="22" />
                 </span>
                 <p class="mt-4 font-semibold text-slate-900 dark:text-white">Assalam-o-Alaikum, {{ auth.firstName() }}!</p>
                 <p class="mx-auto mt-1 max-w-xs text-sm text-slate-500 dark:text-slate-400">Ask about attendance, leave, payroll or company policy — in English or Roman Urdu.</p>
@@ -91,17 +90,17 @@ const TOOL_LABELS: Record<string, string> = {
             @for (m of store.messages(); track m.id) {
               @if (m.role === 'user') {
                 <div @fadeInUp class="flex justify-end">
-                  <p class="max-w-[85%] whitespace-pre-wrap rounded-3xl rounded-br-lg bg-slate-900 px-4 py-2.5 text-sm text-white shadow-md dark:bg-white dark:text-slate-900">{{ m.content }}</p>
+                  <p class="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-ai-gradient px-4 py-2.5 text-sm text-white shadow-glow-violet">{{ m.content }}</p>
                 </div>
               } @else {
                 <div @fadeInUp class="flex gap-2.5">
-                  <span class="mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-md shadow-violet-500/30">
-                    <lucide-icon [img]="icons.Bot" [size]="16" />
+                  <span class="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-ai-gradient text-white shadow-glow-violet">
+                    <lucide-icon [img]="icons.Bot" [size]="15" />
                   </span>
                   <div class="min-w-0 max-w-[88%]">
                     <div
-                      class="rounded-3xl rounded-tl-lg border px-4 py-3 text-sm leading-relaxed shadow-sm"
-                      [class]="m.fallback ? 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100' : 'border-violet-100 bg-white text-slate-700 dark:border-violet-500/20 dark:bg-slate-900 dark:text-slate-200'"
+                      class="rounded-2xl rounded-tl-md border px-4 py-3 text-sm leading-relaxed shadow-xs"
+                      [class]="m.fallback ? 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100' : 'border-slate-200 bg-white text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200'"
                     >
                       <div [innerHTML]="html(m)"></div>
                     </div>
@@ -110,7 +109,7 @@ const TOOL_LABELS: Record<string, string> = {
                       @for (tool of m.tools ?? []; track $index) {
                         <span
                           class="badge"
-                          [class]="tool.status === 'ok' ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/25' : tool.status === 'denied' ? 'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-400/25' : 'bg-slate-100 text-slate-600 ring-slate-400/30 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-600/40'"
+                          [class]="tool.status === 'ok' ? 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-400/25' : tool.status === 'denied' ? 'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-400/25' : 'bg-slate-100 text-slate-600 ring-slate-400/30 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-600/40'"
                           [title]="tool.status === 'denied' ? 'Blocked: outside your data scope' : tool.name"
                         >
                           <lucide-icon [img]="tool.status === 'ok' ? icons.Wrench : tool.status === 'denied' ? icons.Ban : icons.CircleAlert" [size]="10" />
@@ -127,10 +126,10 @@ const TOOL_LABELS: Record<string, string> = {
             }
             @if (store.pending()) {
               <div @fadeInUp class="flex gap-2.5">
-                <span class="mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white">
-                  <lucide-icon [img]="icons.Bot" [size]="16" />
+                <span class="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-ai-gradient text-white shadow-glow-violet">
+                  <lucide-icon [img]="icons.Bot" [size]="15" />
                 </span>
-                <div class="ai-shimmer rounded-3xl rounded-tl-lg border border-violet-200 px-4 py-3 dark:border-violet-500/30">
+                <div class="ai-shimmer rounded-2xl rounded-tl-md border border-violet-200 px-4 py-3 dark:border-violet-500/30">
                   <p class="flex items-center gap-2 text-sm font-medium text-violet-700 dark:text-violet-300">
                     <lucide-icon [img]="icons.WandSparkles" [size]="15" class="animate-pulse" />
                     {{ thinking() }}
@@ -146,12 +145,12 @@ const TOOL_LABELS: Record<string, string> = {
           </div>
 
           <!-- Composer -->
-          <footer class="border-t border-violet-100 bg-white p-3 dark:border-violet-500/20 dark:bg-slate-950">
-            <div class="scroll-thin -mx-1 mb-2.5 flex gap-1.5 overflow-x-auto px-1 pb-1">
+          <footer class="border-t border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950">
+            <div class="no-scrollbar -mx-1 mb-2.5 flex gap-1.5 overflow-x-auto px-1">
               @for (p of prompts(); track p) {
                 <button
                   type="button"
-                  class="shrink-0 rounded-full border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-medium text-violet-700 transition hover:-translate-y-0.5 hover:border-violet-300 hover:bg-violet-100 disabled:opacity-50 dark:border-violet-500/30 dark:bg-violet-500/10 dark:text-violet-300"
+                  class="shrink-0 rounded-full border border-violet-200/70 bg-violet-50/60 px-3 py-1 text-xs font-medium text-violet-700 transition-all duration-200 hover:-translate-y-px hover:border-violet-300 hover:bg-violet-100 disabled:opacity-50 dark:border-violet-500/25 dark:bg-violet-500/10 dark:text-violet-300 dark:hover:bg-violet-500/20"
                   [disabled]="store.pending()"
                   (click)="send(p)"
                 >
@@ -159,7 +158,7 @@ const TOOL_LABELS: Record<string, string> = {
                 </button>
               }
             </div>
-            <form class="flex items-end gap-2 rounded-2xl border border-violet-200 bg-white p-1.5 shadow-sm transition focus-within:border-violet-400 focus-within:ring-4 focus-within:ring-violet-500/15 dark:border-violet-500/30 dark:bg-slate-900" (submit)="$event.preventDefault(); send(text())">
+            <form class="flex items-end gap-2 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xs transition focus-within:border-violet-500 focus-within:ring-4 focus-within:ring-violet-500/10 dark:border-slate-700 dark:bg-slate-900 dark:focus-within:border-violet-500" (submit)="$event.preventDefault(); send(text())">
               <textarea
                 #composer
                 rows="1"
@@ -171,7 +170,7 @@ const TOOL_LABELS: Record<string, string> = {
                 placeholder="Ask anything… (Enter to send)"
                 class="max-h-32 min-h-[40px] flex-1 resize-none bg-transparent px-2.5 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-slate-100"
               ></textarea>
-              <button type="submit" class="btn btn-ai btn-icon h-10 w-10 shrink-0 p-0" [disabled]="!text().trim() || store.pending()" aria-label="Send message">
+              <button type="submit" class="btn btn-ai btn-icon h-9 w-9 shrink-0 rounded-lg p-0" [disabled]="!text().trim() || store.pending()" aria-label="Send message">
                 <lucide-icon [img]="icons.Send" [size]="16" />
               </button>
             </form>

@@ -21,14 +21,14 @@ export interface Credentials {
     <app-modal [open]="!!credentials()" [title]="credentials()?.title ?? ''" subtitle="Share these securely — the password is shown only once." [icon]="icons.KeyRound" tone="emerald" (closed)="closed.emit()">
       @if (credentials(); as c) {
         <div class="space-y-3">
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/60">
-            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Sign-in email</p>
+          <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/60">
+            <p class="text-xs font-medium text-slate-400">Sign-in email</p>
             <p class="mt-1 break-all font-mono text-sm font-semibold text-slate-900 dark:text-white">{{ c.email }}</p>
           </div>
-          <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-500/30 dark:bg-emerald-500/10">
-            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">Temporary password</p>
+          <div class="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-500/30 dark:bg-blue-500/10">
+            <p class="text-xs font-medium text-blue-700 dark:text-blue-300">Temporary password</p>
             <div class="mt-1 flex items-center justify-between gap-3">
-              <p class="break-all font-mono text-lg font-bold tracking-wider text-emerald-900 dark:text-emerald-100">{{ c.temporaryPassword }}</p>
+              <p class="break-all font-mono text-lg font-semibold tracking-wider text-blue-900 dark:text-blue-100">{{ c.temporaryPassword }}</p>
               <button type="button" class="btn btn-secondary btn-sm shrink-0" (click)="copy(c)">
                 <lucide-icon [img]="copied() ? icons.Check : icons.Copy" [size]="14" /> {{ copied() ? 'Copied' : 'Copy' }}
               </button>
@@ -40,7 +40,7 @@ export interface Credentials {
           </p>
         </div>
       }
-      <div modal-footer class="flex justify-end border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-primary" (click)="closed.emit()">Done</button>
       </div>
     </app-modal>

@@ -36,7 +36,7 @@ import { ModalComponent } from '../../shared/ui/modal.component';
         }
       </div>
     } @else if (items().length === 0) {
-      <app-empty-state art="calendar" tone="amber" title="No leave types yet" description="Create leave types so employees can request time off.">
+      <app-empty-state art="calendar" title="No leave types yet" description="Create leave types so employees can request time off.">
         @if (canEdit()) {
           <button type="button" class="btn btn-primary" (click)="openCreate()"><lucide-icon [img]="icons.Plus" [size]="16" /> Create leave type</button>
         }
@@ -44,27 +44,26 @@ import { ModalComponent } from '../../shared/ui/modal.component';
     } @else {
       <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" [@listStagger]="items().length">
         @for (t of items(); track t.id) {
-          <article class="card card-hover relative overflow-hidden p-5" [class.opacity-60]="!t.isActive">
-            <div class="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-amber-400/20 blur-2xl"></div>
-            <div class="relative flex items-start justify-between gap-2">
-              <span class="grid h-10 w-10 place-items-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400"><lucide-icon [img]="icons.TreePalm" [size]="18" /></span>
+          <article class="card card-hover p-5" [class.opacity-60]="!t.isActive">
+            <div class="flex items-start justify-between gap-2">
+              <span class="grid h-9 w-9 place-items-center rounded-md bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700"><lucide-icon [img]="icons.TreePalm" [size]="18" /></span>
               <div class="flex flex-wrap justify-end gap-1">
-                <span class="badge" [class]="t.isPaid ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300' : 'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300'">{{ t.isPaid ? 'Paid' : 'Unpaid' }}</span>
+                <span class="badge bg-white text-slate-700 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700"><span class="h-1.5 w-1.5 rounded-full" [class]="t.isPaid ? 'bg-blue-500' : 'bg-slate-400'"></span>{{ t.isPaid ? 'Paid' : 'Unpaid' }}</span>
                 @if (!t.isActive) {
                   <app-status-badge status="inactive" />
                 }
               </div>
             </div>
-            <p class="relative mt-4 font-semibold text-slate-900 dark:text-white">{{ t.name }}</p>
-            <p class="relative mt-1 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            <p class="mt-4 text-sm font-medium text-slate-900 dark:text-white">{{ t.name }}</p>
+            <p class="num mt-1 text-[1.625rem] font-semibold tracking-tight text-slate-900 dark:text-white">
               {{ t.annualQuota === null ? '∞' : t.annualQuota }}
-              <span class="text-sm font-semibold text-slate-400">{{ t.annualQuota === null ? 'unlimited' : 'days / year' }}</span>
+              <span class="text-sm font-normal text-slate-500 dark:text-slate-400">{{ t.annualQuota === null ? 'unlimited' : 'days / year' }}</span>
             </p>
             @if (t.description) {
-              <p class="relative mt-2 line-clamp-2 text-xs text-slate-500 dark:text-slate-400">{{ t.description }}</p>
+              <p class="mt-2 line-clamp-2 text-xs text-slate-500 dark:text-slate-400">{{ t.description }}</p>
             }
             @if (canEdit()) {
-              <div class="relative mt-4 flex gap-1 border-t border-slate-100 pt-3 dark:border-slate-800">
+              <div class="mt-4 flex gap-1 border-t border-slate-100 pt-3 dark:border-slate-800">
                 <button type="button" class="btn btn-ghost btn-sm" (click)="openEdit(t)"><lucide-icon [img]="icons.Pencil" [size]="13" /> Edit</button>
                 <button type="button" class="btn btn-ghost btn-sm text-rose-500" (click)="remove(t)"><lucide-icon [img]="icons.Trash2" [size]="13" /> Delete</button>
               </div>
@@ -81,7 +80,7 @@ import { ModalComponent } from '../../shared/ui/modal.component';
           <input id="ln" class="input" formControlName="name" placeholder="e.g. Maternity" />
           <app-field-error [control]="form.controls.name" label="Name" />
         </div>
-        <label class="flex items-center justify-between rounded-2xl border border-slate-200 p-3.5 dark:border-slate-800">
+        <label class="flex items-center justify-between rounded-lg border border-slate-200 p-3.5 dark:border-slate-800">
           <span class="text-sm font-medium">Unlimited quota <span class="block text-xs font-normal text-slate-500">No annual cap (e.g. Unpaid leave).</span></span>
           <input type="checkbox" class="switch" formControlName="unlimited" />
         </label>
@@ -92,7 +91,7 @@ import { ModalComponent } from '../../shared/ui/modal.component';
             <app-field-error [control]="form.controls.annualQuota" label="Quota" />
           </div>
         }
-        <label class="flex items-center justify-between rounded-2xl border border-slate-200 p-3.5 dark:border-slate-800">
+        <label class="flex items-center justify-between rounded-lg border border-slate-200 p-3.5 dark:border-slate-800">
           <span class="text-sm font-medium">Paid leave <span class="block text-xs font-normal text-slate-500">Unpaid leave days are deducted in payroll.</span></span>
           <input type="checkbox" class="switch" formControlName="isPaid" />
         </label>
@@ -100,12 +99,12 @@ import { ModalComponent } from '../../shared/ui/modal.component';
           <label class="label" for="ld">Description</label>
           <textarea id="ld" rows="2" class="input resize-none" formControlName="description"></textarea>
         </div>
-        <label class="flex items-center justify-between rounded-2xl border border-slate-200 p-3.5 dark:border-slate-800">
+        <label class="flex items-center justify-between rounded-lg border border-slate-200 p-3.5 dark:border-slate-800">
           <span class="text-sm font-medium">Active</span>
           <input type="checkbox" class="switch" formControlName="isActive" />
         </label>
       </form>
-      <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-secondary" (click)="modalOpen.set(false)">Cancel</button>
         <button type="submit" form="lt-form" class="btn btn-amber" [disabled]="saving()">
           <lucide-icon [img]="saving() ? icons.LoaderCircle : icons.Check" [size]="16" [class.animate-spin]="saving()" /> {{ editing() ? 'Save changes' : 'Create leave type' }}

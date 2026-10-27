@@ -21,9 +21,9 @@ import { ModalComponent } from '../../shared/ui/modal.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-1 rounded-2xl border border-slate-200 bg-white/70 p-1 dark:border-slate-800 dark:bg-slate-900/70">
+      <div class="flex items-center gap-1 rounded-lg border border-slate-200 bg-white/70 p-1 dark:border-slate-800 dark:bg-slate-900/70">
         <button type="button" class="btn btn-ghost btn-icon" (click)="shift(-1)" aria-label="Previous year"><lucide-icon [img]="icons.ChevronLeft" [size]="16" /></button>
-        <span class="min-w-16 text-center font-mono text-sm font-bold">{{ year() }}</span>
+        <span class="num min-w-16 text-center text-sm font-semibold">{{ year() }}</span>
         <button type="button" class="btn btn-ghost btn-icon" (click)="shift(1)" aria-label="Next year"><lucide-icon [img]="icons.ChevronRight" [size]="16" /></button>
       </div>
       @if (canEdit()) {
@@ -34,7 +34,7 @@ import { ModalComponent } from '../../shared/ui/modal.component';
     @if (loading()) {
       <div class="skeleton h-64"></div>
     } @else if (items().length === 0) {
-      <app-empty-state art="calendar" tone="teal" [title]="'No public holidays for ' + year()" description="Holidays are skipped automatically in leave working-day counts, attendance and payroll.">
+      <app-empty-state art="calendar" [title]="'No public holidays for ' + year()" description="Holidays are skipped automatically in leave working-day counts, attendance and payroll.">
         @if (canEdit()) {
           <button type="button" class="btn btn-primary" (click)="openCreate()"><lucide-icon [img]="icons.CalendarPlus" [size]="16" /> Add first holiday</button>
         }
@@ -43,10 +43,10 @@ import { ModalComponent } from '../../shared/ui/modal.component';
       <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" [@listStagger]="items().length">
         @for (h of items(); track h.id) {
           <article class="card card-hover group flex items-center gap-4 p-4" [class.opacity-60]="h.date < today()">
-            <div class="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 text-center text-white shadow-md shadow-emerald-500/25">
+            <div class="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-md border border-slate-200 bg-white text-center dark:border-slate-700 dark:bg-slate-900">
               <div>
-                <p class="text-[10px] font-bold uppercase tracking-wider opacity-80">{{ monthShort(h.date) }}</p>
-                <p class="text-2xl font-extrabold leading-none">{{ h.date.slice(8) }}</p>
+                <p class="text-[11px] font-medium text-rose-600 dark:text-rose-400">{{ monthShort(h.date) }}</p>
+                <p class="num text-xl font-semibold leading-none text-slate-900 dark:text-white">{{ h.date.slice(8) }}</p>
               </div>
             </div>
             <div class="min-w-0 flex-1">
@@ -84,7 +84,7 @@ import { ModalComponent } from '../../shared/ui/modal.component';
           <input id="hx" class="input" formControlName="description" placeholder="Optional" />
         </div>
       </form>
-      <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-secondary" (click)="modalOpen.set(false)">Cancel</button>
         <button type="submit" form="hol-form" class="btn btn-primary" [disabled]="saving()">
           <lucide-icon [img]="saving() ? icons.LoaderCircle : icons.Check" [size]="16" [class.animate-spin]="saving()" /> {{ editing() ? 'Save changes' : 'Add holiday' }}

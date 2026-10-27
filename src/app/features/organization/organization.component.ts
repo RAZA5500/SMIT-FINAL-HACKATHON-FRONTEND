@@ -34,8 +34,6 @@ const TABS: OrgTab[] = ['rules', 'departments', 'designations', 'leave', 'holida
     <app-page-header
       title="Organization"
       [subtitle]="auth.isAdmin() ? 'Company rules, geofence and the building blocks every other module uses.' : 'Company rules and structure configured by your Admin.'"
-      [icon]="icons.Building2"
-      tone="navy"
     >
       @if (!auth.isAdmin()) {
         <span class="badge bg-slate-100 py-1 text-slate-600 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">

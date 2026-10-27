@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 const RING_COLORS: Record<string, string> = {
-  emerald: '#10B981',
-  amber: '#F59E0B',
-  violet: '#8B5CF6',
-  blue: '#3B82F6',
-  rose: '#F43F5E',
-  teal: '#0D9488',
+  emerald: '#2563EB',
+  amber: '#D97706',
+  violet: '#7C3AED',
+  blue: '#2563EB',
+  rose: '#E11D48',
+  teal: '#4F46E5',
 };
 
 /** Circular progress ring with an optional threshold marker (e.g. the half-day line). */
@@ -16,19 +16,13 @@ const RING_COLORS: Record<string, string> = {
   template: `
     <div class="relative inline-grid place-items-center" [style.width.px]="size()" [style.height.px]="size()">
       <svg [attr.viewBox]="'0 0 ' + size() + ' ' + size()" class="-rotate-90" [attr.width]="size()" [attr.height]="size()" aria-hidden="true">
-        <defs>
-          <linearGradient [attr.id]="gradientId" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" [attr.stop-color]="color()" stop-opacity="0.65" />
-            <stop offset="100%" [attr.stop-color]="color()" />
-          </linearGradient>
-        </defs>
-        <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius()" fill="none" [attr.stroke-width]="stroke()" class="stroke-slate-200 dark:stroke-slate-800" />
+        <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius()" fill="none" [attr.stroke-width]="stroke()" class="stroke-slate-100 dark:stroke-slate-800" />
         <circle
           [attr.cx]="center()"
           [attr.cy]="center()"
           [attr.r]="radius()"
           fill="none"
-          [attr.stroke]="'url(#' + gradientId + ')'"
+          [attr.stroke]="color()"
           [attr.stroke-width]="stroke()"
           stroke-linecap="round"
           [attr.stroke-dasharray]="circumference()"
@@ -54,9 +48,6 @@ const RING_COLORS: Record<string, string> = {
   `,
 })
 export class ProgressRingComponent {
-  private static nextId = 0;
-  protected readonly gradientId = `ring-grad-${ProgressRingComponent.nextId++}`;
-
   /** 0 → 1 */
   readonly value = input(0);
   readonly size = input(160);
@@ -89,7 +80,7 @@ export class ProgressRingComponent {
   selector: 'app-meter',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="h-2.5 w-full overflow-hidden rounded-full" [class]="track()" role="progressbar" [attr.aria-valuenow]="pct()" aria-valuemin="0" aria-valuemax="100">
+    <div class="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800" role="progressbar" [attr.aria-valuenow]="pct()" aria-valuemin="0" aria-valuemax="100">
       <div class="h-full rounded-full transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]" [class]="fill()" [style.width.%]="pct()"></div>
     </div>
   `,
@@ -100,26 +91,15 @@ export class MeterComponent {
   readonly tone = input<'emerald' | 'amber' | 'violet' | 'blue' | 'rose' | 'teal'>('emerald');
 
   protected readonly pct = computed(() => Math.round(Math.min(1, Math.max(0, this.value() || 0)) * 100));
-  protected readonly track = computed(
-    () =>
-      ({
-        emerald: 'bg-emerald-100 dark:bg-emerald-500/15',
-        amber: 'bg-amber-100 dark:bg-amber-500/15',
-        violet: 'bg-violet-100 dark:bg-violet-500/15',
-        blue: 'bg-blue-100 dark:bg-blue-500/15',
-        rose: 'bg-rose-100 dark:bg-rose-500/15',
-        teal: 'bg-teal-100 dark:bg-teal-500/15',
-      })[this.tone()],
-  );
   protected readonly fill = computed(
     () =>
       ({
-        emerald: 'bg-gradient-to-r from-emerald-400 to-teal-500',
-        amber: 'bg-gradient-to-r from-amber-300 to-amber-500',
-        violet: 'bg-gradient-to-r from-violet-400 to-purple-600',
-        blue: 'bg-gradient-to-r from-sky-400 to-blue-600',
-        rose: 'bg-gradient-to-r from-rose-400 to-rose-600',
-        teal: 'bg-gradient-to-r from-teal-400 to-teal-600',
+        emerald: 'bg-blue-600 dark:bg-blue-500',
+        amber: 'bg-amber-500',
+        violet: 'bg-violet-500',
+        blue: 'bg-blue-500',
+        rose: 'bg-rose-500',
+        teal: 'bg-indigo-600',
       })[this.tone()],
   );
 }
@@ -133,7 +113,7 @@ export class MeterComponent {
       <svg [attr.viewBox]="'0 0 200 124'" class="h-full w-full" aria-hidden="true">
         <defs>
           <linearGradient [attr.id]="gradientId" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#10B981" />
+            <stop offset="0%" stop-color="#3B82F6" />
             <stop offset="50%" stop-color="#F59E0B" />
             <stop offset="100%" stop-color="#F43F5E" />
           </linearGradient>

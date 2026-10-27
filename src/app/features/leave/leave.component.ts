@@ -76,20 +76,13 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
         <div class="space-y-6">
           <div class="card flex flex-wrap items-center justify-between gap-4 p-4">
             <div class="flex flex-wrap items-center gap-3">
-              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Filter status:</span>
+              <span class="text-xs font-medium text-slate-500">Filter status:</span>
               <div class="flex gap-1">
                 @for (s of ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ALL']; track s) {
-                  <button
-                    type="button"
-                    class="rounded-xl px-3 py-1.5 text-xs font-semibold transition"
-                    [class]="inboxFilter() === s ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'"
-                    (click)="setInboxFilter(s)"
-                  >
-                    {{ s }}
+                  <button type="button" class="pill" [class.pill-active]="inboxFilter() === s" (click)="setInboxFilter(s)">
+                    {{ s.charAt(0) + s.slice(1).toLowerCase() }}
                     @if (s === 'PENDING' && approvals.pendingLeave() > 0) {
-                      <span class="ml-1 rounded-full bg-amber-400 px-1.5 py-0.2 text-[10px] text-slate-950 font-bold">
-                        {{ approvals.pendingLeave() }}
-                      </span>
+                      <span class="num rounded-full bg-amber-100 px-1.5 text-[11px] font-medium text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">{{ approvals.pendingLeave() }}</span>
                     }
                   </button>
                 }
@@ -117,7 +110,6 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
           } @else if (inboxRequests().length === 0) {
             <app-empty-state
               art="inbox"
-              tone="violet"
               title="No leave requests"
               description="There are no leave requests matching this filter."
             />
@@ -149,7 +141,7 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
                           </div>
                         </td>
                         <td>
-                          <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold" [class]="r.isPaid ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'">
+                          <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold" [class]="r.isPaid ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'">
                             {{ r.leaveTypeName }}
                           </span>
                         </td>
@@ -181,8 +173,8 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
                                 </button>
                               </div>
                             } @else {
-                              <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-500/20 dark:bg-amber-500/10 dark:text-amber-300">
-                                <lucide-icon [img]="icons.Clock" [size]="12" /> Pending HR review
+                              <span class="badge bg-white text-slate-700 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">
+                                <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span> Pending HR review
                               </span>
                             }
                           } @else {
@@ -225,16 +217,16 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
 
     <!-- Reusable Smart Leave Bar Template -->
     <ng-template #smartLeaveBarTpl>
-      <section class="relative overflow-hidden rounded-3xl border-2 border-violet-500/30 bg-gradient-to-r from-violet-500/10 via-purple-500/5 to-transparent p-5 shadow-lg shadow-violet-500/5 backdrop-blur dark:border-violet-500/40 sm:p-6">
+      <section class="rounded-lg border border-violet-200 bg-white p-5 shadow-card dark:border-violet-500/30 dark:bg-slate-900 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div class="flex items-center gap-3">
-            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 text-white shadow-md shadow-violet-500/25">
-              <lucide-icon [img]="icons.WandSparkles" [size]="20" />
+            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-violet-50 text-violet-600 ring-1 ring-inset ring-violet-200 dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-500/25">
+              <lucide-icon [img]="icons.WandSparkles" [size]="18" />
             </span>
             <div>
               <div class="flex items-center gap-2">
-                <h3 class="font-bold text-slate-900 dark:text-white">Smart Leave AI Bar</h3>
-                <span class="badge bg-violet-100 text-violet-800 ring-violet-500/30 dark:bg-violet-900/40 dark:text-violet-300">
+                <h3 class="section-title">Smart Leave</h3>
+                <span class="badge bg-violet-50 text-violet-700 ring-violet-200 dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-500/25">
                   <lucide-icon [img]="icons.Sparkles" [size]="11" /> AI-powered
                 </span>
               </div>
@@ -249,7 +241,7 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
           <div class="relative flex-1">
             <input
               type="text"
-              class="input w-full pr-10 border-violet-300 focus:border-violet-500 focus:ring-violet-500 dark:border-violet-800"
+              class="input w-full pr-10 focus:border-violet-500 focus:ring-violet-500/15 dark:focus:border-violet-400"
               placeholder="Tell AI when and why you need leave..."
               [(ngModel)]="smartLeaveQuery"
               name="smartLeaveQuery"
@@ -295,7 +287,6 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
         @if (myRequests().length === 0) {
           <app-empty-state
             art="calendar"
-            tone="amber"
             title="No leave requests"
             description="You haven't requested any time off yet. Use the Smart Leave bar or click Apply."
           />
@@ -317,7 +308,7 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
                 @for (mr of myRequests(); track mr.id) {
                   <tr>
                     <td class="font-semibold">{{ mr.leaveTypeName }}</td>
-                    <td class="font-mono text-sm">
+                    <td class="num text-sm">
                       {{ mr.startDate | day }} &rarr; {{ mr.endDate | day }}
                     </td>
                     <td>{{ mr.workingDays }} day{{ mr.workingDays === 1 ? '' : 's' }}</td>
@@ -380,12 +371,12 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
 
         <!-- Working days calculation preview -->
         @if (workingDaysCalc(); as wd) {
-          <div class="rounded-2xl bg-amber-500/10 p-3.5 ring-1 ring-amber-500/20 text-xs text-amber-900 dark:text-amber-200">
+          <div class="rounded-lg border border-amber-200 bg-amber-50 p-3.5 text-xs text-amber-900 dark:border-amber-500/25 dark:bg-amber-500/10 dark:text-amber-200">
             <div class="flex items-center justify-between">
               <span class="font-semibold flex items-center gap-1.5">
                 <lucide-icon [img]="icons.CalendarCheck" [size]="14" /> Effective working days:
               </span>
-              <span class="text-sm font-bold">{{ wd.workingDays }} day{{ wd.workingDays === 1 ? '' : 's' }}</span>
+              <span class="text-sm font-semibold">{{ wd.workingDays }} day{{ wd.workingDays === 1 ? '' : 's' }}</span>
             </div>
             <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
               Configured weekend days and registered public holidays are not deducted from your quota.
@@ -406,12 +397,12 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
         </div>
 
         @if (applyError()) {
-          <p class="rounded-xl bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
+          <p class="rounded-lg bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
             {{ applyError() }}
           </p>
         }
 
-        <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+        <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
           <button type="button" class="btn btn-secondary" (click)="applyModalOpen.set(false)">Cancel</button>
           <button type="submit" class="btn btn-primary" [disabled]="applySubmitting()">
             <lucide-icon [img]="applySubmitting() ? icons.LoaderCircle : icons.Send" [size]="16" [class.animate-spin]="applySubmitting()" />
@@ -431,7 +422,7 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
       (closed)="decisionModalOpen.set(false)"
     >
       <div class="space-y-4">
-        <div class="rounded-2xl bg-slate-50 p-3 text-xs dark:bg-slate-800 space-y-1">
+        <div class="rounded-lg bg-slate-50 p-3 text-xs dark:bg-slate-800 space-y-1">
           <p><span class="text-slate-400">Duration:</span> {{ selectedRequest()?.startDate | day }} &rarr; {{ selectedRequest()?.endDate | day }} ({{ selectedRequest()?.workingDays }} working days)</p>
           <p><span class="text-slate-400">Reason:</span> {{ selectedRequest()?.reason }}</p>
         </div>
@@ -450,7 +441,7 @@ import { SegmentedTabsComponent, TabItem } from '../../shared/ui/segmented-tabs.
         </div>
       </div>
 
-      <div modal-footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+      <div modal-footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
         <button type="button" class="btn btn-secondary" (click)="decisionModalOpen.set(false)">Cancel</button>
         <button
           type="button"

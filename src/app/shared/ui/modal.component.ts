@@ -4,7 +4,7 @@ import { LucideAngularModule, LucideIconData } from 'lucide-angular';
 import { fade, modalPop, slideOver } from '../animations';
 import { Icons } from './icons';
 import { isTopOverlay, lockScroll, popOverlay, pushOverlay, unlockScroll } from './overlay';
-import { TONE_SOLID, Tone } from './tone';
+import { TONE_CHIP, Tone } from './tone';
 
 @Directive()
 abstract class OverlayBase {
@@ -57,7 +57,7 @@ abstract class OverlayBase {
   template: `
     @if (open()) {
       <div class="fixed inset-0 z-[60] flex items-end justify-center p-0 sm:items-center sm:p-6" role="presentation">
-        <div @fade class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm" (click)="requestClose()"></div>
+        <div @fade class="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" (click)="requestClose()"></div>
         <section
           @modalPop
           cdkTrapFocus
@@ -65,17 +65,17 @@ abstract class OverlayBase {
           role="dialog"
           aria-modal="true"
           [attr.aria-label]="title()"
-          class="relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-3xl border border-slate-200/80 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900 sm:rounded-3xl"
+          class="relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-2xl border border-slate-200/80 bg-white shadow-lift dark:border-white/10 dark:bg-slate-900 sm:rounded-2xl"
           [class]="width()"
         >
-          <header class="flex items-start gap-3.5 border-b border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+          <header class="flex items-start gap-3 border-b border-slate-200 px-5 py-4 dark:border-slate-800 sm:px-6">
             @if (icon(); as img) {
-              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br text-white shadow-md" [class]="solid()">
-                <lucide-icon [img]="img" [size]="19" [strokeWidth]="2.2" />
+              <span class="icon-tile h-10 w-10" [class]="chip()">
+                <lucide-icon [img]="img" [size]="18" [strokeWidth]="2" />
               </span>
             }
             <div class="min-w-0 flex-1">
-              <h2 class="text-base font-bold text-slate-900 dark:text-white sm:text-lg">{{ title() }}</h2>
+              <h2 class="text-base font-semibold text-slate-900 dark:text-white">{{ title() }}</h2>
               @if (subtitle()) {
                 <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{{ subtitle() }}</p>
               }
@@ -103,7 +103,7 @@ export class ModalComponent extends OverlayBase {
   readonly size = input<'sm' | 'md' | 'lg' | 'xl' | '2xl'>('md');
 
   protected readonly icons = Icons;
-  protected readonly solid = computed(() => TONE_SOLID[this.tone()]);
+  protected readonly chip = computed(() => TONE_CHIP[this.tone()]);
   protected readonly width = computed(
     () => ({ sm: 'sm:max-w-md', md: 'sm:max-w-lg', lg: 'sm:max-w-2xl', xl: 'sm:max-w-4xl', '2xl': 'sm:max-w-6xl' })[this.size()],
   );
@@ -126,14 +126,14 @@ export class ModalComponent extends OverlayBase {
           role="dialog"
           aria-modal="true"
           [attr.aria-label]="title()"
-          class="absolute inset-y-0 right-0 flex w-full flex-col border-l border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+          class="absolute inset-y-0 right-0 flex w-full flex-col border-l border-slate-200 bg-white shadow-lift dark:border-slate-800 dark:bg-slate-900"
           [class]="width()"
         >
           <ng-content select="[slide-header]" />
           @if (title()) {
             <header class="flex items-start gap-3 border-b border-slate-100 px-5 py-4 dark:border-slate-800">
               <div class="min-w-0 flex-1">
-                <h2 class="truncate text-lg font-bold text-slate-900 dark:text-white">{{ title() }}</h2>
+                <h2 class="truncate text-lg font-semibold text-slate-900 dark:text-white">{{ title() }}</h2>
                 @if (subtitle()) {
                   <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{{ subtitle() }}</p>
                 }
